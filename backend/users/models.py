@@ -1,2 +1,41 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
+class User(AbstractUser):
+    """
+    Extends Django's AbstractUser with role-based access and OAuth support.
+    Supports both JWT authentication and social login via Account model.
+    """
+
+    email = models.EmailField(unique=True)
+    image = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    verified = models.DateTimeField(null=True, blank=True)
+
+    class Role(models.TextChoices):
+        ADMIN = 'admin', 'Admin'
+        USER = 'user', 'User'
+        INSTRUCTOR = 'instructor', 'Instructor'
+        STUDENT = 'student', 'Student'
+
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
+
+    class Meta:
+        db_table = "Users"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
+
+class Account(models.Model):
+    """
+    Links users to OAuth providers (Google, Facebook, GitHub, etc.).
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=50)
+    provider = models.CharField(max_length=50)
+    provider_account_id = models.CharField(max_length=1024)
+
+    class Meta:
+        db_table = "Accounts"
+        verbose_name = "Account"
+        verbose_name_plural = "Accounts"
+        unique_together = [['provider', 'provider_account_id']]
