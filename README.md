@@ -78,7 +78,7 @@ docs: add ERD for forum and user relationships
    ```
 
 4. Create a Pull Request with:
-   - **Title**: Use the branch name (e.g., `feature/add-syntax-highlighting`)
+   - **Title**: Use the branch name with the first letter capitalised (e.g., `Feature/add-syntax-highlighting`)
    - **Description**: Write a clear description of what the PR does:
      ```
      This PR adds syntax highlighting support for the code editor.
