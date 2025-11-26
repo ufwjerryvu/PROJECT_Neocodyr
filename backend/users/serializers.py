@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import User
 
-class ReadUserSerializer(serializers.ModelSerializer):
+class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ['password']
+        fields = ['username', 'first_name', 'last_name', 'email', 
+                    'date_joined', 'role', 'image']
         
-class CreateUserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
@@ -18,8 +19,8 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
     
-class UpdateUserSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'image']
+        fields = ['username', 'first_name', 'last_name', 'email']
         
