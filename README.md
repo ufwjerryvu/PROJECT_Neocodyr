@@ -1,4 +1,4 @@
-# Project Name
+# Neocodyr
 
 A collaborative learning platform combining forum-based discussions with integrated code execution and testing capabilities.
 
