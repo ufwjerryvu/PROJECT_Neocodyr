@@ -3,16 +3,33 @@
 import { useEffect } from 'react';
 import { userService } from './services/userService';
 import { authService } from './services/authService';
+import { AuthContext, useAuth } from './contexts/AuthContext';
 
 export const TestPage = () => {
+    const [user, setUser] = useAuth();
+
     useEffect(() => {
-        const test = async () => {
-            console.log(await authService.login({username: 'celestial.wonder', password: 'password'}));
-            console.log(await userService.getUser());
+        const testLogin = async () => {
+
+            try {
+                const response = await authService.login({ username: "celestial.wonder", password: "password" });
+                localStorage.setItem("access", response.data.access);
+
+                const userInfo = await userService.getUser();
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+                setUser(userInfo);
+            } catch (error) {}
         }
 
-        test();
+        testLogin();
+
     }, [])
+
+    useEffect(() => {
+        console.log('User information from auth context', user);
+    }, [user]);
+
     return (
         <>
         </>
