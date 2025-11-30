@@ -15,6 +15,14 @@ const Navbar = ({ variant }: NavbarProp) => {
     const authButtonText = variant === "login" ? "Register" : "Login";
     const navigate = useNavigate();
 
+    const navbarSelection = () => {
+        if(user && variant === "dashboard"){
+            return authenticatedNavbar();
+        }
+
+        return unauthenticatedNavbar();
+    }
+
     const unauthenticatedNavbar = () => {
         return (
             <>
@@ -61,7 +69,7 @@ const Navbar = ({ variant }: NavbarProp) => {
                     </button>
                 </div>
 
-                {unauthenticatedNavbar()}
+                {navbarSelection()}
 
             </nav>
         </>
