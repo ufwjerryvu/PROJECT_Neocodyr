@@ -1,8 +1,8 @@
-import { useState, useEffect, createContext, ReactNode, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode} from 'react';
 import { BasicUserInfo } from '../services/userService';
 
 interface AuthContextType{
-    user: BasicUserInfo | null,
+    user: BasicUserInfo | null;
     setUser: (user: BasicUserInfo | null) => void;
 }
 
@@ -22,8 +22,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
             try{
                 setUser(JSON.parse(userInfo) as BasicUserInfo);
             }catch(error){
-                console.error("Error parsing using information from local storage: ", error);
-                localStorage.removeItem("userInfo");
+                console.error("Error unable to parse userInfo from local storage: ", error);
             }
         }
     }, []);
@@ -33,7 +32,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
             {children}
         </AuthContext.Provider>
     )
-}
+};
 
 const useAuth = (): [BasicUserInfo | null, (user: BasicUserInfo | null) => void] => {
     const context = useContext(AuthContext);
@@ -42,7 +41,5 @@ const useAuth = (): [BasicUserInfo | null, (user: BasicUserInfo | null) => void]
         throw new Error("useAuth must be used within an AuthProvider");
     }
 
-    return [context.user, context.setUser]
-}
-
-export { useAuth, AuthProvider, AuthContext }
+    return [context.user, context.setUser];
+};
