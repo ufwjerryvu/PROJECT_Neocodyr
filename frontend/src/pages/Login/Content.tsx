@@ -1,11 +1,66 @@
 import React, { useState } from 'react';
 import { Rocket, Lock, User } from 'lucide-react';
+import { authService } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
+import { BasicUserInfo, userService } from '../../services/userService';
 
 const LoginPageContent = () => {
     const [formData, setFormData] = useState({
-        usernameOrEmail: '',
-        password: ''
+        usernameOrEmail: "",
+        password: ""
     });
+    const [message, setMessage] = useState<
+        { type: "error" | "success", text: string } | null
+    >(null);
+
+    const navigate = useNavigate();
+
+    const handleLoginSubmit = async (e: React.MouseEvent) => {
+        /* Sends to the login endpoint defined in service */
+
+        try {
+            const tokens = await authService.login({
+                username: formData.usernameOrEmail,
+                password: formData.password
+            });
+            
+            localStorage.setItem("access", tokens.data.access);
+            localStorage.setItem("refresh", tokens.data.refresh);
+
+            const userInfo = await userService.getUser();
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+            setMessage({ type: "success", text: "Successfully logged in!" })
+            setTimeout(() => {
+                navigate("/dashboard");
+            }, 1000);
+
+        } catch (error: any) {
+            if (error.response?.status === 401) {
+                setMessage({ type: "error", text: "Login failed. Invalid credentials." });
+            } else if (error.response?.status === 500) {
+                setMessage({ type: "error", text: "A server has occurred." })
+            } else {
+                setMessage({ type: "error", text: "An unknown error has occurred." })
+            }
+        }
+    }
+
+    interface LoginMessageBoxProps{
+        type: string,
+        text: string
+    }
+
+    const LoginMessageBox = ({type, text}: LoginMessageBoxProps) => {
+        return (
+            <div className={`px-4 py-3 my-4 rounded-lg border text-center ${type === "error"
+                    ? "bg-red-500/10 border-red-500/30 text-red-300"
+                    : "bg-green-500/10 border-green-500/30 text-green-300"
+                }`}>
+                {text}
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center px-8 py-20">
@@ -14,21 +69,23 @@ const LoginPageContent = () => {
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 backdrop-blur-sm border border-purple-500/30 rounded-full mb-6 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
                         <span className="text-sm font-medium text-purple-300">Welcome Back</span>
                     </div>
-                    
+
                     <h1 className="text-5xl font-bold mb-4">
                         <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
                             Sign In
                         </span>
                     </h1>
-                    
+
                     <p className="text-slate-300">
                         Continue your journey through the cosmos
                     </p>
                 </div>
 
+                { message && <LoginMessageBox type={message.type} text={message.text}/>}
+
                 <div className="relative group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition"></div>
-                    
+
                     <div className="relative bg-gradient-to-br from-slate-950/90 to-indigo-950/90 backdrop-blur-xl rounded-2xl overflow-hidden border border-purple-500/40 shadow-2xl p-8">
                         <div className="space-y-6">
                             <div>
@@ -40,7 +97,7 @@ const LoginPageContent = () => {
                                     <input
                                         type="text"
                                         value={formData.usernameOrEmail}
-                                        onChange={(e) => setFormData({...formData, usernameOrEmail: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, usernameOrEmail: e.target.value })}
                                         className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
                                         placeholder="username or email@example.com"
                                     />
@@ -56,7 +113,7 @@ const LoginPageContent = () => {
                                     <input
                                         type="password"
                                         value={formData.password}
-                                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                         className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
                                         placeholder="••••••••"
                                     />
@@ -77,6 +134,7 @@ const LoginPageContent = () => {
                             </div>
 
                             <button
+                                onClick={handleLoginSubmit}
                                 className="w-full group px-8 py-4 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white rounded-xl text-lg font-semibold hover:from-purple-500 hover:via-blue-500 hover:to-indigo-500 transition shadow-2xl shadow-purple-900/60 hover:shadow-purple-700/80 flex items-center justify-center gap-2"
                             >
                                 <Rocket className="w-5 h-5 group-hover:-rotate-45 transition-transform" />
@@ -86,7 +144,7 @@ const LoginPageContent = () => {
 
                         <div className="mt-6 text-center">
                             <p className="text-slate-400">
-                                Don't have an account?{' '}
+                                Don"t have an account?{" "}
                                 <a href="#" className="text-purple-400 hover:text-purple-300 font-medium transition">
                                     Create Account
                                 </a>

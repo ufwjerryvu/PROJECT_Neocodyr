@@ -16,7 +16,7 @@ const Navbar = ({ variant }: NavbarProp) => {
     const navigate = useNavigate();
 
     const navbarSelection = () => {
-        if(user && variant === "dashboard"){
+        if(user){
             return authenticatedNavbar();
         }
 
