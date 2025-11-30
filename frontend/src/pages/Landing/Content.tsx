@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Play, CheckCircle, FileCode, Zap, Terminal, Sparkles, Rocket, Star } from 'lucide-react';
 
 const LandingPageContent = () => {
-    const [showResult, setShowResult] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
     const [passedTests, setPassedTests] = useState(0);
 

@@ -43,3 +43,5 @@ const useAuth = (): [BasicUserInfo | null, (user: BasicUserInfo | null) => void]
 
     return [context.user, context.setUser];
 };
+
+export { AuthProvider, useAuth, AuthContext };
