@@ -9,16 +9,18 @@ export const api = axios.create({
     access token to the request header */
 api.interceptors.request.use(
     (config) => {
-        const access = localStorage.getItem("access");
-        if (access) {
-            config.headers.setAuthorization(`Bearer ${access}`);
+        const accessToken = localStorage.getItem("access");
+
+        if (accessToken) {
+            config.headers.setAuthorization(`Bearer ${accessToken}`);
         }
+
         return config;
     },
     (error) => {
         return Promise.reject(error);
     }
-)
+);
 
 /* However, the response interceptor also tries to check if the access token
     has expired and uses the refresh token to obtain a new access token. It 
@@ -29,7 +31,7 @@ api.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config;
-        
+
         /* Access token has expired or the user was never authenticated in
             the first place. Interceptor to obtain the access token using
             the refresh token and retry original request once. */
@@ -40,27 +42,29 @@ api.interceptors.response.use(
             const refreshToken = localStorage.getItem("refresh");
 
             try {
-                if (refreshToken) {
-                    const refreshAccess = await authService.refresh({
-                        refresh: refreshToken
-                    });
-
-                    localStorage.setItem("access", refreshAccess.data.access);
-                    originalRequest.headers.setAuthorization(`Bearer ${refreshAccess.data.access}`);
-                    
-                    return api.request(originalRequest);
-                } else {
-                    throw new Error("Token is not valid");
+                if (!refreshToken) {
+                   throw Error("Token is not valid");
                 }
-            } catch (error) {
+
+                const response = await authService.refresh({ refresh: refreshToken });
+                localStorage.setItem("access", response.data.access);
+
+                originalRequest.headers.setAuthorization(
+                    `Bearer ${response.data.access}`
+                );
+                
+                return api.request(originalRequest);
+            } catch (e) {
                 localStorage.removeItem("access");
                 localStorage.removeItem("refresh");
                 localStorage.removeItem("userInfo");
-                
-                console.error("Token is expired, invalid, or user unauthenticated.");
+
+                console.error("Refresh token invalid, expired, or user\
+                     unauthenticated.");
 
                 /* Redirect the user to login but only after page reload */
                 window.location.href = "/login";
+                return Promise.reject(error);
             }
         }
 

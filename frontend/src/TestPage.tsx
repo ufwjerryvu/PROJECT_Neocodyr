@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { userService } from './services/userService';
 import { authService } from './services/authService';
 import { AuthContext, useAuth } from './contexts/AuthContext';
-import { api } from './utils/axios';
+import { api } from './utils/interceptor';
 
 export const TestPage = () => {
     const handleClick = async (e: React.MouseEvent) => {
