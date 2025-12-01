@@ -145,7 +145,7 @@ const LoginPageContent = () => {
                         <div className="mt-6 text-center">
                             <p className="text-slate-400">
                                 Don"t have an account?{" "}
-                                <a href="#" className="text-purple-400 hover:text-purple-300 font-medium transition">
+                                <a href="/register" className="text-purple-400 hover:text-purple-300 font-medium transition">
                                     Create Account
                                 </a>
                             </p>
