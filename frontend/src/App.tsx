@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -11,7 +11,7 @@ import { TestPage } from './TestPage';
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <AuthProvider>
         <Routes>
           <Route path="/" element={<LandingPage/>}/>
@@ -20,7 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage/>}/>
         </Routes>
       </AuthProvider>
-    </Router>
+    </BrowserRouter>
   );
 }
 
