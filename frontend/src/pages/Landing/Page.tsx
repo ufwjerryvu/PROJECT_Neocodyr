@@ -5,7 +5,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import LandingPageContent from './Content';
 
-const LandingPage = () => {
+export const LandingPage = () => {
     return(
         <Background>
             <Navbar variant={"landing"}/>
@@ -14,5 +14,3 @@ const LandingPage = () => {
         </Background>
     );
 }
-
-export default LandingPage;
