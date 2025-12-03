@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils import timezone
+from datetime import timedelta
 
 from .serializers import (
     UserCreateSerializer, 
@@ -44,6 +46,12 @@ class UserUpdateView(APIView):
 
     def patch(self, request):
         user = request.user
+
+        if user.last_updated + timedelta(days=7) > timezone.now():
+            return Response({
+                "error": "Must wait the full 7 days to update details again."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():
