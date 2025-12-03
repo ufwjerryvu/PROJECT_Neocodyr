@@ -3,6 +3,7 @@ import { Rocket, Lock, User } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { BasicUserInfo, userService } from '../../services/userService';
+import { useAuth } from '../../contexts/AuthContext';
 
 const LoginPageContent = () => {
     const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const LoginPageContent = () => {
     >(null);
 
     const navigate = useNavigate();
+    const [,setUser,] = useAuth();
 
     const handleLoginSubmit = async (e: React.MouseEvent) => {
         /* Sends to the login endpoint defined in service */
@@ -27,13 +29,14 @@ const LoginPageContent = () => {
             localStorage.setItem("access", tokens.data.access);
             localStorage.setItem("refresh", tokens.data.refresh);
 
-            const userInfo = await userService.getUser();
+            const userInfo = await userService.getUser() as BasicUserInfo;
             localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
             setMessage({ type: "success", text: "Successfully logged in!" })
             setTimeout(() => {
+                setUser(userInfo);
                 navigate("/dashboard");
-            }, 1000);
+            }, 500);
 
         } catch (error: any) {
             if (error.response?.status === 401) {

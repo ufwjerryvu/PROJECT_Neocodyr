@@ -10,6 +10,17 @@ export interface BasicUserInfo{
     email: string
 };
 
+export interface ExtendedUserInfo{
+    username: string, 
+    first_name: string,
+    last_name: string,
+    email: string,
+    bio: string | null,
+    date_joined: Date,
+    image: string | null,
+    role: string
+}
+
 export interface RegisterUserInfo{
     username: string,
     first_name: string,
@@ -21,13 +32,13 @@ export interface RegisterUserInfo{
 export const userService = {
     getUser: async () => {
         const response = await api.get("/users/me/");
-        const user: BasicUserInfo = response.data;
+        const user = response.data;
         return user;
     },
 
     registerUser: async (registerInfo: RegisterUserInfo) => {
         const response = await api.post("/auth/register/", registerInfo);
-        const user: BasicUserInfo = response.data;
+        const user = response.data;
         return user;
     }
 };

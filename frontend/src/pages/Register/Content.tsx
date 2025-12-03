@@ -62,7 +62,7 @@ const RegisterPageContent = () => {
 
             setTimeout(() => {
                 navigate("/login");
-            }, 1000);
+            }, 500);
         } catch (error: any) {
             if (error.response?.status === 400) {
                 setMessage({
