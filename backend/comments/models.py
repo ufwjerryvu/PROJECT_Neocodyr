@@ -14,6 +14,7 @@ class Comments(models.Model):
         db_table = "Comments"
         verbose_name = "Comment"
         verbose_name_plural = "Comments"
+        ordering = ["-created_at"]
     
 class CommentHierarchyTable:
     original_comment = models.ForeignKey(Comments, related_name='original_comment', on_delete=models.CASCADE)
