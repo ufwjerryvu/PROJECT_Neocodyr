@@ -30,6 +30,8 @@ urlpatterns = [
     path('api/auth/register/', RegisterView.as_view()),
 
     path('api/users/', include('users.urls')),
+    path('api/comments/', include('comments.urls')),
+    path('api/posts/', include('posting.urls')),
 
     path('admin/', admin.site.urls),
 ]
