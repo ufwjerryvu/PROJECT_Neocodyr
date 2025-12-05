@@ -1,5 +1,5 @@
 from django.db import models
-from backend.posts.models import Posts
+from backend.posting.models import Posts
 from backend.users.models import User
 
 class Comments(models.Model):
