@@ -8,13 +8,8 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
         fields = ['id', 'post', 'author', 'content', 'created_at', 'updated_at']
-
-    def create(self, validated_data):
-        comment = Comments(**validated_data)
-        comment.save()
-        return comment
-
-class CreateCommentSerializer(serializers.ModelSerializer):
+    
+class CreateCommentHierarchySerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentHierarchyTable
         fields = ['original_comment', 'descendant_comment', 'depth']
@@ -23,7 +18,6 @@ class CreateCommentSerializer(serializers.ModelSerializer):
         closure_entry = CommentHierarchyTable(**validated_data)
         closure_entry.save()
         return closure_entry
-        
         
 class CommentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
