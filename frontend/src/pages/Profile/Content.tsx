@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User, Mail, Calendar, Edit2, Camera, Plus, Check, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { BasicUserInfo, ExtendedUserInfo, userService } from '../../services/userService';
+import { userService } from '../../services/userService';
 import AlertModal from '../../components/AlertModal';
-import { profile } from 'console';
 
 interface EditMode {
     username: boolean,
@@ -14,7 +12,7 @@ interface EditMode {
 }
 
 const ProfilePageContent = () => {
-    const [user, setUser,] = useAuth();
+    const [,setUser,] = useAuth();
     const [hasEdited, setHasEdited] = useState(false);
     const [editMode, setEditMode] = useState<EditMode>({
         username: false,
@@ -137,7 +135,7 @@ const ProfilePageContent = () => {
     const handleSubmitChanges = async () => {
         try {
 
-            const response = await userService.updateUser({
+            await userService.updateUser({
                 username: profileData.username!,
                 first_name: profileData.firstName!,
                 last_name: profileData.lastName!,
