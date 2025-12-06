@@ -20,7 +20,7 @@ class CommentPagination(LimitOffsetPagination):
 class CommentUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
-    def get_object(self, pk):
+    def get_object(self, pk) -> Comments:
         try:
             return Comments.objects.get(pk=pk)
         except Comments.DoesNotExist:

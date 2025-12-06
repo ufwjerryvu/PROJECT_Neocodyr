@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Comments, CommentHierarchyTable
+from .models import Comments, CommentHierarchyTable, LikeCommentTable
 
 '''
 This is reading the comment itself
@@ -7,7 +7,7 @@ This is reading the comment itself
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
-        fields = ['id', 'post', 'author', 'content', 'created_at', 'updated_at']
+        fields = ['id', 'post_id', 'author_id', 'likes', 'content', 'reply_time', 'updated_at']
     
 class CreateCommentHierarchySerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +18,7 @@ class CreateCommentHierarchySerializer(serializers.ModelSerializer):
         closure_entry = CommentHierarchyTable(**validated_data)
         closure_entry.save()
         return closure_entry
+        
         
 class CommentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
