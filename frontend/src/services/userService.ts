@@ -29,6 +29,13 @@ export interface RegisterUserInfo{
     password: string
 }
 
+export interface UpdateUserInfo{
+    username: string,
+    first_name: string,
+    last_name: string,
+    bio: string
+}
+
 export const userService = {
     getUser: async () => {
         const response = await api.get("/users/me/");
@@ -40,5 +47,11 @@ export const userService = {
         const response = await api.post("/auth/register/", registerInfo);
         const user = response.data;
         return user;
+    },
+
+    updateUser: async(updateInfo: UpdateUserInfo) => {
+        const response = await api.patch("/users/me/", updateInfo);
+        const updated = response.data;
+        return updated;
     }
 };

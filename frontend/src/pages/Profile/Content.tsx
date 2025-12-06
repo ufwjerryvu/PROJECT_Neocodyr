@@ -3,6 +3,8 @@ import { User, Mail, Calendar, Edit2, Camera, Plus, Check, X } from 'lucide-reac
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { BasicUserInfo, ExtendedUserInfo, userService } from '../../services/userService';
+import AlertModal from '../../components/AlertModal';
+import { profile } from 'console';
 
 interface EditMode {
     username: boolean,
@@ -12,6 +14,7 @@ interface EditMode {
 }
 
 const ProfilePageContent = () => {
+    const [user, setUser,] = useAuth();
     const [hasEdited, setHasEdited] = useState(false);
     const [editMode, setEditMode] = useState<EditMode>({
         username: false,
@@ -40,17 +43,33 @@ const ProfilePageContent = () => {
         dateJoined: null
     });
 
-    const handleToggleEdit = (field: keyof EditMode) => {
+    const [originalProfileData, setOriginalProfileData] = useState(profileData);
+
+    const handleEditStartClick = (field: keyof EditMode) => {
         setEditMode((prev) => ({
             ...prev,
-            [field]: !prev[field]
+            [field]: true
         }))
+    }
+
+    const handleEditCancelClick = (field: keyof EditMode) => {
+        setEditMode((prev) => ({ ...prev, [field]: false }));
+        setProfileData((prev) => ({...prev, [field]: originalProfileData[field]}));
+    }
+
+    const handleEditSaveClick = (field: keyof EditMode) => {
+        setEditMode((prev) => ({ ...prev, [field]: false }));
+        setHasEdited(true);
+    }
+
+    const handleFieldChange = (field: keyof EditMode, newValue: string) => {
+        setProfileData((prev) => ({ ...prev, [field]: newValue }));
     }
 
     useEffect(() => {
         const loadUserProfile = async () => {
             const user = await userService.getUser();
-            setProfileData({
+            const fetchedUserData = {
                 username: user.username,
                 firstName: user.first_name,
                 lastName: user.last_name,
@@ -65,11 +84,117 @@ const ProfilePageContent = () => {
                         year: 'numeric'
                     }
                 )
-            });
+            };
+
+            setOriginalProfileData(fetchedUserData);
+            setProfileData(fetchedUserData);
         }
 
         loadUserProfile();
     }, [])
+
+    const [showCooldownWarning, setShowCooldownWarning] = useState(false);
+
+    const handleClickSaveAllChanges = () => {
+        setShowCooldownWarning(true);
+    }
+
+    const [statusBoxInfo, setStatusBoxInfo] = useState<{
+        type: 'success' | 'error',
+        text: string
+    } | null>(null);
+
+    const StatusBox = ({ type, text }: { type: 'success' | 'error', text: string }) => {
+        if (type === 'success') {
+            return (
+                <div className="bg-green-500/10 border border-green-500/30 backdrop-blur-xl rounded-2xl shadow-2xl p-6 my-4">
+                    <div className="flex flex-col items-center text-center">
+                        <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mb-3">
+                            <Check className="w-6 h-6 text-green-400" />
+                        </div>
+                        <div className="text-green-300 text-center">{text}</div>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="bg-red-500/10 border border-red-500/30 backdrop-blur-xl rounded-2xl shadow-2xl p-6 my-4">
+                <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <X className="w-6 h-6 text-red-400" />
+                    </div>
+                    <div className="flex-1 pt-1 text-left">
+                        {text.split('\n').map((line, i) => (
+                            <div key={i} className="text-red-300">{line}</div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const handleSubmitChanges = async () => {
+        try {
+
+            const response = await userService.updateUser({
+                username: profileData.username!,
+                first_name: profileData.firstName!,
+                last_name: profileData.lastName!,
+                bio: profileData.bio!
+            });
+
+            /* Update user info in local storage for conditional authentication
+                rendering */
+            localStorage.removeItem("userInfo");
+            const userInfo = await userService.getUser();
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            setUser(userInfo);
+
+            setHasEdited(false);
+            setOriginalProfileData(profileData);
+
+            /* Setting the status box */
+            setStatusBoxInfo({
+                type: "success",
+                text: "We have successfully updated your details!"
+            });
+
+            setTimeout(() => {
+                setStatusBoxInfo(null);
+            }, 10000)
+        } catch (error: any) {
+            const errors = error.response?.data || {};
+            const errorMessages = [];
+
+            const fieldLabels = {
+                username: 'Username',
+                first_name: 'First name',
+                last_name: 'Last name',
+                bio: 'Bio'
+            };
+
+            for (const [field, label] of Object.entries(fieldLabels)) {
+                if (errors[field]) {
+                    errorMessages.push(`• ${label}: ${errors[field]}`);
+                }
+            }
+
+            if (errors.non_field_errors) {
+                errorMessages.push(errors.non_field_errors);
+            }
+
+            setStatusBoxInfo({
+                type: "error",
+                text: errorMessages.join('\n') || "An error occurred"
+            });
+
+            setTimeout(() => setStatusBoxInfo(null), 60000);
+
+            setProfileData(originalProfileData);
+            setHasEdited(false);
+        }
+    }
 
     return (
         <main className="min-h-screen px-8 py-20">
@@ -83,6 +208,8 @@ const ProfilePageContent = () => {
                     </h1>
                     <p className="text-slate-400">Manage your account settings</p>
                 </div>
+
+                {statusBoxInfo && <StatusBox text={statusBoxInfo.text} type={statusBoxInfo.type} />}
 
                 {/* Profile Card Container */}
                 <div className="relative group">
@@ -136,6 +263,7 @@ const ProfilePageContent = () => {
                                                     {editMode.firstName ? (
                                                         <input
                                                             value={profileData.firstName || ''}
+                                                            onChange={(e) => { handleFieldChange("firstName", e.target.value) }}
                                                             className="w-full bg-slate-950/50 border border-purple-500/30 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-purple-500/60 transition"
                                                         />
                                                     ) : (
@@ -145,7 +273,7 @@ const ProfilePageContent = () => {
                                                 <div className="flex gap-2">
                                                     {!editMode.firstName ? (
                                                         profileData.firstName ? (
-                                                            <button onClick={() => handleToggleEdit("firstName")}
+                                                            <button onClick={() => handleEditStartClick("firstName")}
                                                                 className="p-2 hover:bg-slate-800 rounded-lg transition">
                                                                 <Edit2 className="w-4 h-4 text-purple-400" />
                                                             </button>
@@ -156,10 +284,10 @@ const ProfilePageContent = () => {
                                                         )
                                                     ) : (
                                                         <>
-                                                            <button className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
+                                                            <button onClick={() => { handleEditSaveClick("firstName") }} className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
                                                                 <Check className="w-4 h-4 text-white" />
                                                             </button>
-                                                            <button onClick={() => { handleToggleEdit("firstName") }} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
+                                                            <button onClick={() => { handleEditCancelClick("firstName") }} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
                                                                 <X className="w-4 h-4 text-white" />
                                                             </button>
                                                         </>
@@ -172,6 +300,7 @@ const ProfilePageContent = () => {
                                                     <label className="text-slate-400 text-sm mb-2 block">Last Name</label>
                                                     {editMode.lastName ? (
                                                         <input
+                                                            onChange={(e) => handleFieldChange("lastName", e.target.value)}
                                                             value={profileData.lastName || ''}
                                                             className="w-full bg-slate-950/50 border border-purple-500/30 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-purple-500/60 transition"
                                                         />
@@ -182,7 +311,7 @@ const ProfilePageContent = () => {
                                                 <div className="flex gap-2">
                                                     {!editMode.lastName ? (
                                                         profileData.lastName ? (
-                                                            <button onClick={() => { handleToggleEdit("lastName") }} className="p-2 hover:bg-slate-800 rounded-lg transition">
+                                                            <button onClick={() => { handleEditStartClick("lastName") }} className="p-2 hover:bg-slate-800 rounded-lg transition">
                                                                 <Edit2 className="w-4 h-4 text-purple-400" />
                                                             </button>
                                                         ) : (
@@ -192,10 +321,10 @@ const ProfilePageContent = () => {
                                                         )
                                                     ) : (
                                                         <>
-                                                            <button className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
+                                                            <button onClick={() => { handleEditSaveClick("lastName") }} className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
                                                                 <Check className="w-4 h-4 text-white" />
                                                             </button>
-                                                            <button onClick={() => { handleToggleEdit("lastName") }}
+                                                            <button onClick={() => { handleEditCancelClick("lastName") }}
                                                                 className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
                                                                 <X className="w-4 h-4 text-white" />
                                                             </button>
@@ -215,6 +344,7 @@ const ProfilePageContent = () => {
                                             <label className="text-slate-400 text-sm mb-1 block">Username</label>
                                             {editMode.username ? (
                                                 <input
+                                                    onChange={(e) => { handleFieldChange("username", e.target.value) }}
                                                     value={profileData.username || ''}
                                                     className="w-full bg-slate-950/50 border border-purple-500/30 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-purple-500/60 transition"
                                                 />
@@ -226,20 +356,20 @@ const ProfilePageContent = () => {
                                     <div className="flex gap-2 ml-4">
                                         {!editMode.username ? (
                                             profileData.username ? (
-                                                <button onClick={() => handleToggleEdit("username")} className="p-2 hover:bg-slate-800 rounded-lg transition">
+                                                <button onClick={() => handleEditStartClick("username")} className="p-2 hover:bg-slate-800 rounded-lg transition">
                                                     <Edit2 className="w-4 h-4 text-purple-400" />
                                                 </button>
                                             ) : (
-                                                <button onClick={() => handleToggleEdit("username")} className="p-2 hover:bg-slate-800 rounded-lg transition">
+                                                <button className="p-2 hover:bg-slate-800 rounded-lg transition">
                                                     <Plus className="w-4 h-4 text-purple-400" />
                                                 </button>
                                             )
                                         ) : (
                                             <>
-                                                <button className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
+                                                <button onClick={() => handleEditSaveClick("username")} className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
                                                     <Check className="w-4 h-4 text-white" />
                                                 </button>
-                                                <button onClick={() => handleToggleEdit("username")} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
+                                                <button onClick={() => handleEditCancelClick("username")} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
                                                     <X className="w-4 h-4 text-white" />
                                                 </button>
                                             </>
@@ -264,6 +394,7 @@ const ProfilePageContent = () => {
                                             <label className="text-slate-400 text-sm mb-1 block">Bio</label>
                                             {editMode.bio ? (
                                                 <textarea
+                                                    onChange={(e) => handleFieldChange("bio", e.target.value)}
                                                     value={profileData.bio || ''}
                                                     rows={3}
                                                     className="w-full bg-slate-950/50 border border-purple-500/30 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-purple-500/60 transition resize-none"
@@ -276,20 +407,20 @@ const ProfilePageContent = () => {
                                     <div className="flex gap-2 ml-4">
                                         {!editMode.bio ? (
                                             profileData.bio ? (
-                                                <button className="p-2 hover:bg-slate-800 rounded-lg transition">
+                                                <button onClick={() => handleEditStartClick("bio")} className="p-2 hover:bg-slate-800 rounded-lg transition">
                                                     <Edit2 className="w-4 h-4 text-purple-400" />
                                                 </button>
                                             ) : (
-                                                <button className="p-2 hover:bg-slate-800 rounded-lg transition">
+                                                <button onClick={() => handleEditStartClick("bio")} className="p-2 hover:bg-slate-800 rounded-lg transition">
                                                     <Plus className="w-4 h-4 text-purple-400" />
                                                 </button>
                                             )
                                         ) : (
                                             <>
-                                                <button className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
+                                                <button onClick={() => handleEditSaveClick("bio")} className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition">
                                                     <Check className="w-4 h-4 text-white" />
                                                 </button>
-                                                <button onClick={() => { handleToggleEdit("bio") }} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
+                                                <button onClick={() => { handleEditCancelClick("bio") }} className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
                                                     <X className="w-4 h-4 text-white" />
                                                 </button>
                                             </>
@@ -310,14 +441,31 @@ const ProfilePageContent = () => {
                             {/* Save Button */}
                             {hasEdited && (
                                 <div className="mt-8 pt-8 border-t border-slate-700/50">
-                                    <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition shadow-lg shadow-purple-900/30">
+                                    <button onClick={() => handleClickSaveAllChanges()}
+                                        className="w-full px-6 py-3 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] font-medium">
                                         Save Changes
                                     </button>
-                                </div>)
-                            }
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
+                {/* Cooldown Period Warning Modal */}
+                {showCooldownWarning && (
+                    <AlertModal
+                        isOpen={showCooldownWarning}
+                        onClose={() => setShowCooldownWarning(false)}
+                        onConfirm={() => {
+                            handleSubmitChanges();
+                            setShowCooldownWarning(false);
+                        }}
+                        type="warning"
+                        title="Warning"
+                        message="You can only change your detall once every 7 days. Are you sure you want to proceed?"
+                        confirmText="Yes, save."
+                        cancelText="Cancel"
+                    />
+                )}
             </div>
         </main>
     );
