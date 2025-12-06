@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Rocket, Mail, Lock, User } from 'lucide-react';
 import { BasicUserInfo, userService } from '../../services/userService';
 import { useNavigate } from 'react-router-dom';
+import StatusBox from '../../components/StatusBox';
 
 const RegisterPageContent = () => {
     const [formData, setFormData] = useState({
@@ -15,23 +16,12 @@ const RegisterPageContent = () => {
 
     const navigate = useNavigate();
 
-    interface RegisterMessageBoxProps {
-        type: string,
+    interface StatusBoxProps {
+        type: "error" | "success",
         text: string
     }
 
-    const [message, setMessage] = useState<RegisterMessageBoxProps | null>(null);
-
-    const RegisterMessageBox = ({ type, text }: RegisterMessageBoxProps) => {
-        return (
-            <div className={`px-4 py-3 my-4 rounded-lg border text-center ${type === "error"
-                ? "bg-red-500/10 border-red-500/30 text-red-300"
-                : "bg-green-500/10 border-green-500/30 text-green-300"
-                }`}>
-                {text}
-            </div>
-        )
-    }
+    const [message, setMessage] = useState<StatusBoxProps | null>(null);
 
     const handleRegisterSubmit = async (e: React.MouseEvent) => {
         if (formData.password !== formData.confirmPassword) {
@@ -62,7 +52,7 @@ const RegisterPageContent = () => {
 
             setTimeout(() => {
                 navigate("/login");
-            }, 1000);
+            }, 500);
         } catch (error: any) {
             if (error.response?.status === 400) {
                 setMessage({
@@ -104,7 +94,7 @@ const RegisterPageContent = () => {
                     </p>
                 </div>
 
-                { message && <RegisterMessageBox type={message.type} text={message.text}/> }
+                { message && <StatusBox type={message.type} text={message.text}/> }
 
                 <div className="relative group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition"></div>

@@ -10,6 +10,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     image = models.ImageField(upload_to="avatars/", blank=True, null=True)
     verified = models.DateTimeField(null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+
+    # Triggers whenever model is saved
+    last_updated = models.DateTimeField(auto_now=True) 
 
     class Role(models.TextChoices):
         ADMIN = 'admin', 'Admin'

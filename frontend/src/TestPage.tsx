@@ -1,6 +1,7 @@
 /* Temporary page for immediate ad-hoc testing. Delete whenever not needed anymore */
 
 import React, { useEffect } from 'react';
+import AlertModal from './components/AlertModal';
 import { userService } from './services/userService';
 import { authService } from './services/authService';
 import { AuthContext, useAuth } from './contexts/AuthContext';
