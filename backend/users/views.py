@@ -47,11 +47,6 @@ class UserUpdateView(APIView):
     def patch(self, request):
         user = request.user
 
-        if user.last_updated + timedelta(days=7) > timezone.now():
-            return Response({
-                "error": "Must wait the full 7 days to update details again."
-            }, status=status.HTTP_400_BAD_REQUEST)
-
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():

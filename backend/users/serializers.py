@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from .models import User
+from datetime import timedelta
+from django.utils import timezone
+from rest_framework.validators import UniqueValidator
+from .models import User
 import re
 
 def validate_username_format(value: str) -> str:
@@ -28,6 +32,16 @@ def validate_name_format(value: str) -> str:
         )
 
     return value
+
+def validate_update_cooldown(user: User) -> None:
+    """
+    Let's the user update their information only after 7 days.
+    """
+
+    if user.last_updated + timedelta(seconds=7) > timezone.now():
+        raise serializers.ValidationError(
+            "Must wait the full 7 days to update details again."
+        )
                   
 
 class UserReadSerializer(serializers.ModelSerializer):
@@ -84,20 +98,31 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     """
 
     username = serializers.CharField(
-        allow_blank=False, 
-        validators=[validate_username_format]
+        allow_blank=False,
+        validators=[
+            validate_username_format,
+            UniqueValidator(queryset=User.objects.all())
+        ]
     )
 
     first_name = serializers.CharField(
         allow_blank=False,
-        validators=[validate_name_format]
+        validators=[
+            validate_name_format
+        ]
     )
 
     last_name = serializers.CharField(
         allow_blank=False,
-        validators=[validate_name_format]
+        validators=[
+            validate_name_format
+        ]
     )
-    
+
+    def validate(self, attrs):
+        validate_update_cooldown(self.instance)
+        return attrs
+
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'bio']
