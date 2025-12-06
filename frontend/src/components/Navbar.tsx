@@ -11,9 +11,20 @@ interface NavbarProp {
 }
 
 const Navbar = ({ variant }: NavbarProp) => {
-    const [user] = useAuth();
+    const [user, setUser,] = useAuth();
     const authButtonText = variant === "login" ? "Register" : "Login";
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("userInfo");
+        
+        setTimeout(() => {
+            navigate("/login");
+            setUser(null);
+        }, 500);
+    }
 
     const navbarSelection = () => {
         if (user) {
@@ -88,7 +99,7 @@ const Navbar = ({ variant }: NavbarProp) => {
                                 </button>
                                 <button
                                     onClick={() => {
-                                        // Your logout logic here
+                                        handleLogout();
                                         setIsDropdownOpen(false);
                                     }}
                                     className="w-full px-4 py-3 text-left text-slate-200 hover:bg-purple-500/20 transition flex items-center gap-3"

@@ -4,6 +4,7 @@ import { authService } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { BasicUserInfo, userService } from '../../services/userService';
 import { useAuth } from '../../contexts/AuthContext';
+import StatusBox from '../../components/StatusBox';
 
 const LoginPageContent = () => {
     const [formData, setFormData] = useState({
@@ -49,22 +50,6 @@ const LoginPageContent = () => {
         }
     }
 
-    interface LoginMessageBoxProps{
-        type: string,
-        text: string
-    }
-
-    const LoginMessageBox = ({type, text}: LoginMessageBoxProps) => {
-        return (
-            <div className={`px-4 py-3 my-4 rounded-lg border text-center ${type === "error"
-                    ? "bg-red-500/10 border-red-500/30 text-red-300"
-                    : "bg-green-500/10 border-green-500/30 text-green-300"
-                }`}>
-                {text}
-            </div>
-        )
-    }
-
     return (
         <div className="min-h-screen flex items-center justify-center px-8 py-20">
             <div className="w-full max-w-md">
@@ -84,7 +69,7 @@ const LoginPageContent = () => {
                     </p>
                 </div>
 
-                { message && <LoginMessageBox type={message.type} text={message.text}/>}
+                { message && <StatusBox type={message.type} text={message.text}/>}
 
                 <div className="relative group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition"></div>
