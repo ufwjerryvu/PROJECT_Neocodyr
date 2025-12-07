@@ -3,6 +3,8 @@ import { Rocket, Lock, User } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { BasicUserInfo, userService } from '../../services/userService';
+import { useAuth } from '../../contexts/AuthContext';
+import StatusBox from '../../components/StatusBox';
 
 const LoginPageContent = () => {
     const [formData, setFormData] = useState({
@@ -14,6 +16,7 @@ const LoginPageContent = () => {
     >(null);
 
     const navigate = useNavigate();
+    const [,setUser,] = useAuth();
 
     const handleLoginSubmit = async (e: React.MouseEvent) => {
         /* Sends to the login endpoint defined in service */
@@ -27,13 +30,14 @@ const LoginPageContent = () => {
             localStorage.setItem("access", tokens.data.access);
             localStorage.setItem("refresh", tokens.data.refresh);
 
-            const userInfo = await userService.getUser();
+            const userInfo = await userService.getUser() as BasicUserInfo;
             localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
             setMessage({ type: "success", text: "Successfully logged in!" })
             setTimeout(() => {
+                setUser(userInfo);
                 navigate("/dashboard");
-            }, 1000);
+            }, 500);
 
         } catch (error: any) {
             if (error.response?.status === 401) {
@@ -44,22 +48,6 @@ const LoginPageContent = () => {
                 setMessage({ type: "error", text: "An unknown error has occurred." })
             }
         }
-    }
-
-    interface LoginMessageBoxProps{
-        type: string,
-        text: string
-    }
-
-    const LoginMessageBox = ({type, text}: LoginMessageBoxProps) => {
-        return (
-            <div className={`px-4 py-3 my-4 rounded-lg border text-center ${type === "error"
-                    ? "bg-red-500/10 border-red-500/30 text-red-300"
-                    : "bg-green-500/10 border-green-500/30 text-green-300"
-                }`}>
-                {text}
-            </div>
-        )
     }
 
     return (
@@ -81,7 +69,7 @@ const LoginPageContent = () => {
                     </p>
                 </div>
 
-                { message && <LoginMessageBox type={message.type} text={message.text}/>}
+                { message && <StatusBox type={message.type} text={message.text}/>}
 
                 <div className="relative group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition"></div>
