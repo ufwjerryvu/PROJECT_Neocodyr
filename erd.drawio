@@ -1669,7 +1669,7 @@
         <mxCell id="0Mtl_el2hpSdQTIPsvEB-91" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" value="CommentHierarchyTable" vertex="1">
           <mxGeometry height="150" width="330" x="1210" y="-200" as="geometry" />
         </mxCell>
-        <mxCell id="G677t-6jYDAdRceBPksr-23" parent="0Mtl_el2hpSdQTIPsvEB-91" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1">
+        <mxCell id="G677t-6jYDAdRceBPksr-23" parent="0Mtl_el2hpSdQTIPsvEB-91" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;swimlaneFillColor=none;strokeWidth=1;" vertex="1">
           <mxGeometry height="30" width="330" y="30" as="geometry" />
         </mxCell>
         <mxCell id="G677t-6jYDAdRceBPksr-24" parent="G677t-6jYDAdRceBPksr-23" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;whiteSpace=wrap;html=1;" value="&lt;b&gt;PK&lt;/b&gt;" vertex="1">
@@ -1677,12 +1677,12 @@
             <mxRectangle height="30" width="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="G677t-6jYDAdRceBPksr-25" parent="G677t-6jYDAdRceBPksr-23" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="&lt;b&gt;&lt;u&gt;id: BIGINT&lt;/u&gt;&lt;/b&gt;" vertex="1">
+        <mxCell id="G677t-6jYDAdRceBPksr-25" parent="G677t-6jYDAdRceBPksr-23" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;strokeColor=default;" value="&lt;b&gt;&lt;u&gt;id: BIGINT&lt;/u&gt;&lt;/b&gt;" vertex="1">
           <mxGeometry height="30" width="300" x="30" as="geometry">
             <mxRectangle height="30" width="300" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="0Mtl_el2hpSdQTIPsvEB-95" parent="0Mtl_el2hpSdQTIPsvEB-91" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1">
+        <mxCell id="0Mtl_el2hpSdQTIPsvEB-95" parent="0Mtl_el2hpSdQTIPsvEB-91" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;rounded=0;" vertex="1">
           <mxGeometry height="30" width="330" y="60" as="geometry" />
         </mxCell>
         <mxCell id="0Mtl_el2hpSdQTIPsvEB-96" parent="0Mtl_el2hpSdQTIPsvEB-95" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;whiteSpace=wrap;html=1;" value="FK" vertex="1">
@@ -1851,6 +1851,13 @@
               <mxPoint x="510" y="175" />
               <mxPoint x="510" y="505" />
             </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5gB-rm637fdFk23VWR_N-1" edge="1" parent="1" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;" value="">
+          <mxGeometry relative="1" width="80" as="geometry">
+            <Array as="points" />
+            <mxPoint x="1430" y="10" as="sourcePoint" />
+            <mxPoint x="1510" y="10" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
