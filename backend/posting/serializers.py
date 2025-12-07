@@ -17,7 +17,7 @@ class PostsSerializer(serializers.ModelSerializer):
 class PostUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
-        fields = ["post_id", "content"]
+        fields = ["id", "content", "author_id"]
         
 class BatchReadPostsSerializer(serializers.ModelSerializer):
     class Meta:
