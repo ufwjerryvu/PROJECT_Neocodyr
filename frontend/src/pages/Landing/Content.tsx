@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Play, CheckCircle, FileCode, Zap, Terminal, Sparkles, Rocket, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPageContent = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [passedTests, setPassedTests] = useState(0);
+    const navigate = useNavigate();
 
     const handleRun = () => {
         setIsRunning(true);
@@ -43,7 +45,8 @@ const LandingPageContent = () => {
                         </p>
 
                         <div className="flex gap-4 justify-center">
-                            <button className="cursor-pointer group px-8 py-4 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white rounded-xl text-lg font-semibold hover:from-purple-500 hover:via-blue-500 hover:to-indigo-500 transition shadow-2xl shadow-purple-900/60 hover:shadow-purple-700/80 flex items-center gap-2">
+                            <button onClick={() => navigate("/dashboard")}
+                                className="cursor-pointer group px-8 py-4 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white rounded-xl text-lg font-semibold hover:from-purple-500 hover:via-blue-500 hover:to-indigo-500 transition shadow-2xl shadow-purple-900/60 hover:shadow-purple-700/80 flex items-center gap-2">
                                 <Rocket className="w-5 h-5 group-hover:-rotate-45 transition-transform" />
                                 Launch Editor
                             </button>
