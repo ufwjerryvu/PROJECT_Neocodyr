@@ -12,6 +12,7 @@ import { TestPage } from './TestPage';
 import { ProfilePage } from './pages/Profile/Page';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { GuestRoute } from './routes/GuestRoute';
+import { DashboardPage } from './pages/Dashboard/Page';
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
           </Route>
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<TestPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Routes>
