@@ -2,6 +2,20 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Starting the Backend
+
+In the backend directory, to begin development:
+
+1. Ensure you have a `.env` in the `backend` directory. Similar to this:
+
+```
+POSTGRES_DB=neocodyr
+POSTGRES_USER=username
+POSTGRES_PASSWORD=password
+```
+
+2. Once you have created the `.env`, run the `./dev_run.sh`.
+
 ## Available Scripts
 
 In the project directory, you can run:
