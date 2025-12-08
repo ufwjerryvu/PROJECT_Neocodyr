@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.4">
   <diagram name="Page-1" id="4AEv1W-PqznHKnVDw7jH">
-    <mxGraphModel dx="2329" dy="2189" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1378" dy="1829" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -417,7 +417,7 @@
             <mxRectangle height="30" width="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="V6Elqa8lzkflcVClYXPD-6" parent="V6Elqa8lzkflcVClYXPD-4" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="lession_id: BIGINT NOT NULL&amp;nbsp;" vertex="1">
+        <mxCell id="V6Elqa8lzkflcVClYXPD-6" parent="V6Elqa8lzkflcVClYXPD-4" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="lesson_id: BIGINT NOT NULL&amp;nbsp;" vertex="1">
           <mxGeometry height="30" width="290" x="30" as="geometry">
             <mxRectangle height="30" width="290" as="alternateBounds" />
           </mxGeometry>
@@ -979,7 +979,7 @@
             <mxPoint x="-44" y="-14" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="LPBNok46_hmUJ5raAJL--8" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" value="Class" vertex="1">
+        <mxCell id="LPBNok46_hmUJ5raAJL--8" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" value="Classroom" vertex="1">
           <mxGeometry height="210" width="320" x="120" y="760" as="geometry" />
         </mxCell>
         <mxCell id="LPBNok46_hmUJ5raAJL--9" parent="LPBNok46_hmUJ5raAJL--8" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" value="" vertex="1">
@@ -1084,7 +1084,7 @@
             <mxRectangle height="30" width="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="MstwXdsHWb2YAQvngPF5-7" parent="MstwXdsHWb2YAQvngPF5-5" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="class_id: BIGINT NOT NULL" vertex="1">
+        <mxCell id="MstwXdsHWb2YAQvngPF5-7" parent="MstwXdsHWb2YAQvngPF5-5" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="classroom_id: BIGINT NOT NULL" vertex="1">
           <mxGeometry height="30" width="290" x="30" as="geometry">
             <mxRectangle height="30" width="290" as="alternateBounds" />
           </mxGeometry>
@@ -1177,7 +1177,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="kJi2taAz4xvVSXTqbqEk-7" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;" value="Class Student" vertex="1">
+        <mxCell id="kJi2taAz4xvVSXTqbqEk-7" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;" value="Classroom Student" vertex="1">
           <mxGeometry height="120" width="310" x="320" y="540" as="geometry" />
         </mxCell>
         <mxCell id="kJi2taAz4xvVSXTqbqEk-8" parent="kJi2taAz4xvVSXTqbqEk-7" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;html=1;" value="" vertex="1">
@@ -1222,7 +1222,7 @@
         <mxCell id="kJi2taAz4xvVSXTqbqEk-23" edge="1" parent="1" source="LPBNok46_hmUJ5raAJL--8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.522;entryY=0.967;entryDx=0;entryDy=0;entryPerimeter=0;startSize=10;endSize=10;endArrow=ERzeroToMany;endFill=0;startArrow=ERzeroToMany;startFill=0;" target="kJi2taAz4xvVSXTqbqEk-14">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="kJi2taAz4xvVSXTqbqEk-24" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;" value="Class Instructor" vertex="1">
+        <mxCell id="kJi2taAz4xvVSXTqbqEk-24" parent="1" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;" value="Classroom Instructor" vertex="1">
           <mxGeometry height="120" width="300" x="-50" y="540" as="geometry" />
         </mxCell>
         <mxCell id="kJi2taAz4xvVSXTqbqEk-25" parent="kJi2taAz4xvVSXTqbqEk-24" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;html=1;" value="" vertex="1">
@@ -1359,7 +1359,7 @@
             <mxRectangle height="30" width="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="M634Nmyjb6Be5dYE5HJN-6" parent="M634Nmyjb6Be5dYE5HJN-4" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="class_id: BIGINT NOT NULL" vertex="1">
+        <mxCell id="M634Nmyjb6Be5dYE5HJN-6" parent="M634Nmyjb6Be5dYE5HJN-4" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="classroom_id: BIGINT NOT NULL" vertex="1">
           <mxGeometry height="30" width="290" x="30" as="geometry">
             <mxRectangle height="30" width="290" as="alternateBounds" />
           </mxGeometry>
