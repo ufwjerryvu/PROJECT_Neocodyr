@@ -1,6 +1,6 @@
 from django.db import models
-from backend.posting.models import Posts
-from backend.users.models import User
+from users.models import User
+from posting.models import Posts
 
 class Comments(models.Model):
     reply = models.TextField()
@@ -14,11 +14,21 @@ class Comments(models.Model):
         db_table = "Comments"
         verbose_name = "Comment"
         verbose_name_plural = "Comments"
-        ordering = ["-created_at"]
+        ordering = ["-reply_time"]
     
-class CommentHierarchyTable:
-    original_comment = models.ForeignKey(Comments, related_name='original_comment', on_delete=models.CASCADE)
-    descendant_comment = models.ForeignKey(Comments, related_name='descendant_comment', on_delete=models.CASCADE)
+class CommentHierarchyTable(models.Model):
+    original_comment = models.ForeignKey(
+        Comments, 
+        related_name='original_comment', 
+        on_delete=models.CASCADE
+    )
+    
+    descendant_comment = models.ForeignKey(
+        Comments, 
+        related_name='descendant_comment', 
+        on_delete=models.CASCADE
+    )
+    
     depth = models.IntegerField()
     
     class Meta:

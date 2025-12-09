@@ -64,8 +64,8 @@ class BatchPostsView(APIView):
 
     permission_classes = [permissions.AllowAny]
 
-    def get(self, request):
-        posts = Posts.objects.all()
+    def get(self, request, class_id):
+        posts = Posts.objects.all() # class_id filter() 
         paginator = PostPagination()
         page = paginator.paginate_queryset(posts, request, view=self)
         serializer = PostsSerializer(page, many=True)

@@ -1,5 +1,6 @@
 from django.db import models
-from backend.users.models import User
+from classes.models import Class
+from users.models import User
 
 class Posts(models.Model):
     title = models.CharField(max_length=512)
@@ -7,7 +8,8 @@ class Posts(models.Model):
     likes = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, blank=True)
-    author_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    class_id = models.ForeignKey(Class, null=False, blank=False, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
     
     class Meta:
         db_table = "Posts"

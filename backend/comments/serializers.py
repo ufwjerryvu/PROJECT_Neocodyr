@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Comments, CommentHierarchyTable, LikeCommentTable
+from .models import Comments, CommentHierarchyTable
 
 '''
 This is reading the comment itself
