@@ -63,6 +63,9 @@ class ModifyClassView(APIView):
             return Response("Updated the current class", status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    """_summary_
+    Removed the current class
+    """
     def delete(self, request, class_id):
         current_class = Class.objects.filter(id=class_id)
         current_class.delete()
