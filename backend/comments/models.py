@@ -3,7 +3,7 @@ from users.models import User
 from posting.models import Posts
 
 class Comments(models.Model):
-    reply = models.TextField()
+    content = models.TextField()
     likes = models.IntegerField(default=0)
     reply_time = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, blank=True)
