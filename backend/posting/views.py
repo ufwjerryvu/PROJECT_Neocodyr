@@ -6,6 +6,7 @@ from rest_framework import status
 
 from rest_framework import permissions
 
+from ..classes.models import ClassStudent, ClassInstructor
 from .models import Posts
 from .serializers import PostsSerializer, PostUpdateSerializer
 
@@ -21,7 +22,7 @@ class CreatePostView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
     
-    def post(self, request):
+    def put(self, request):
         post = request.data
         serializer_class = PostsSerializer(data=post)
         if serializer_class.is_valid():
@@ -32,12 +33,15 @@ class CreatePostView(APIView):
 class UpdatePostsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
-    def post(self, request):
+    def patch(self, request, post_id):
         new_content = request.data
         new_content_serializer = PostUpdateSerializer(new_content)
         if new_content_serializer.is_valid():
-            post_id = new_content_serializer.data.get("post_id", -1)
-            if len(post_id) >= 0: return Response(new_content_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            author_id = new_content_serializer.data.get("author_id", -1)
+            if author_id < 0 or author_id != request.user.id:
+                return Response({"error": "You don't have permission to edit this post"}, status=status.HTTP_403_FORBIDDEN)
+            if len(post_id) >= 0: 
+                return Response(new_content_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             post = Posts.object.filter(id=post_id)
             updated_post = PostsSerializer(post, new_content_serializer.data)
             return Response(updated_post.data, status=status.HTTP_200_OK)
@@ -65,7 +69,16 @@ class BatchPostsView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, class_id):
-        posts = Posts.objects.all() # class_id filter() 
+        # Check if they can view the posts
+        user_id = request.user.id
+        students = ClassStudent.objects.filter(class_=class_id).filter(user_=user_id)
+        instructor = ClassInstructor.objects.filter(class_=class_id).filter(user_=user_id)
+        if len(students) <= 0 and len(instructor) <= 0:
+            return Response(
+                {"error": "You don't have permission to see these post"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        posts = Posts.objects.filter(class_id=class_id)
         paginator = PostPagination()
         page = paginator.paginate_queryset(posts, request, view=self)
         serializer = PostsSerializer(page, many=True)
