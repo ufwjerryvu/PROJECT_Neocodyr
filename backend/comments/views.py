@@ -17,15 +17,7 @@ class CommentPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 100 
 
-class CommentUpdateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_object(self, pk) -> Comments:
-        try:
-            return Comments.objects.get(pk=pk)
-        except Comments.DoesNotExist:
-            raise Http404
-    
+class CommentGetView(APIView):
     '''
     For the purpose for getting batch comments 
     '''
@@ -37,6 +29,16 @@ class CommentUpdateView(APIView):
         
         return Response(paginator.get_paginated_response(serializer.data), 
                         status=status.HTTP_200_OK)
+        
+class CommentUpdateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self, pk) -> Comments:
+        try:
+            return Comments.objects.get(pk=pk)
+        except Comments.DoesNotExist:
+            raise Http404
+    
     '''
     For the purpose for updating comment
     '''
@@ -54,11 +56,12 @@ class ReplyCommentView(APIView):
     '''
     For the purpose of replying to a comment. This should add to the closure table.
     '''
-    def post(self, request):
+    def put(self, request):
         comment_hierarchy = request.data
         
-        serializer = CreateCommentHierarchySerializer(data=comment_hierarchy)
+        serializer = CreateCommentHierarchySerializer(comment_hierarchy)
         if serializer.is_valid():
+            
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -69,9 +72,9 @@ class ReplyPostView(APIView):
     '''
     For the purpose to replying to a post.
     '''
-    def post(self, request):
+    def put(self, request):
         comment = request.data
-        serializer = CommentSerializer(data=comment)
+        serializer = CommentSerializer(comment)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
