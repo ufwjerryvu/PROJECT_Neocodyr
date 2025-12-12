@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import User
 
-class Class(models.Model):
+class Classroom(models.Model):
     """
     The model for a class/unit. Each classroom can have as little as zero 
     students and as many students as they want. Same for instructors. The
@@ -20,20 +20,20 @@ class Class(models.Model):
     is_public = models.BooleanField(default=True)
 
     class Meta:
-        db_table = "Classes"
-        verbose_name = "Class"
-        verbose_name_plural = "Classes"
+        db_table = "Classrooms"
+        verbose_name = "Classroom"
+        verbose_name_plural = "Classrooms"
 
 class Lesson(models.Model):
     """
-    Model for a lesson. Lesson is just pure text but supports MD and LaTeX.
-    Each lesson currently belongs to a class but could belong to multiple
-    classes in the future. Could also extend lessons to be other types of
-    assessments like quizzes.
+    Model for a lesson. Each lesson represents a session where a mix of lectures,
+    problems, and quizzes a grouped together to convey a topic. 
     """
 
     title = models.CharField(null=False, max_length=256)
-    content = models.TextField(null=False)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    order = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "Lessons"
