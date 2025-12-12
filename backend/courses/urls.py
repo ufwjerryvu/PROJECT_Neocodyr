@@ -4,6 +4,6 @@ from .views import (
 )
 
 urlpatterns = [
-    path('me/', CourseAuthorCreateViews.as_view()),
+    path('authors/me/', CourseAuthorCreateViews.as_view()),
 
 ]
