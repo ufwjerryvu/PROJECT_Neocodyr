@@ -14,9 +14,10 @@ class Classroom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Author is automatically and instructor. Checks needed. 
-    author = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    instructors = models.ManyToManyField(User)
-    students = models.ManyToManyField(User)
+    author = models.ForeignKey(User, null=False, on_delete=models.CASCADE,
+                            related_name="authored_classrooms")
+    instructors = models.ManyToManyField(User, related_name="teaching_classrooms")
+    students = models.ManyToManyField(User, related_name="enrolled_classrooms")
     is_public = models.BooleanField(default=True)
 
     class Meta:
@@ -39,3 +40,4 @@ class Lesson(models.Model):
         db_table = "Lessons"
         verbose_name = "Lesson"
         verbose_name_plural = "Lessons"
+        unique_together = [["classroom", "order"]]
