@@ -71,7 +71,12 @@ const Navbar = ({ variant }: NavbarProp) => {
                 <div className="flex items-center gap-3 text-2xl font-bold">
                 </div>
                 <div className="flex items-center gap-4">
-                    <button className="cursor-pointer px-6 py-2 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                    <button onClick={() => navigate("/")}
+                        className="cursor-pointer px-6 py-2 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                        Explore
+                    </button>
+                    <button onClick={() => navigate("/dashboard")}
+                        className="cursor-pointer px-6 py-2 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]">
                         Dashboard
                     </button>
                     <button className="cursor-pointer p-2 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]">
