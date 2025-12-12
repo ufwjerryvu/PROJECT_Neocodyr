@@ -6,7 +6,7 @@ from rest_framework import status
 
 from rest_framework import permissions
 
-from ..classrooms.models import Class
+from classrooms.models import Class
 from .models import Posts
 from .serializers import PostsSerializer, PostUpdateSerializer
 

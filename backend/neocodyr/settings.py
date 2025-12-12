@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'users',
+    'classrooms',
     'comments',
-    "posting",
+    'posting',
+    'problems'
 ]
 
 MIDDLEWARE = [
@@ -132,9 +134,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Overriding with customer User model
+# Overriding with customer User model 
 AUTH_USER_MODEL = "users.User"
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

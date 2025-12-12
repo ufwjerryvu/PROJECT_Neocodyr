@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='Comments',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reply', models.TextField()),
+                ('content', models.TextField()),
                 ('likes', models.IntegerField(default=0)),
                 ('reply_time', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(blank=True, null=True)),

@@ -15,8 +15,8 @@ class Class(models.Model):
 
     # Author is automatically an instructor. Checks needed. 
     author = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    instructors = models.ManyToManyField(User)
-    students = models.ManyToManyField(User)
+    instructors = models.ManyToManyField(User, related_name="instructor_classes")
+    students = models.ManyToManyField(User, related_name="student_classes")
     is_public = models.BooleanField(default=True)
 
     class Meta:
