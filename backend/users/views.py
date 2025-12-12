@@ -2,8 +2,6 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils import timezone
-from datetime import timedelta
 
 from .serializers import (
     UserCreateSerializer, 
@@ -11,9 +9,9 @@ from .serializers import (
     UserUpdateSerializer
 )
 
-from rest_framework import permissions, viewsets
+from rest_framework import permissions
 
-class RegisterView(APIView):
+class UserRegisterView(APIView):
     """
     For the purpose of registering a user. Required fields are specified
     in the user create serializer.

@@ -26,7 +26,7 @@ def validate_name_format(value: str) -> str:
     other than letters, apostrophes, spaces, and hyphens.
     """
 
-    if not re.match(r"^[A-Za-z\'\s-]+$", value):
+    if not re.match(r"^[A-Za-z\"\s-]+$", value):
         raise serializers.ValidationError(
             "Name field can only contain letters, apostrophes, spaces, and hyphens"
         )
@@ -35,7 +35,7 @@ def validate_name_format(value: str) -> str:
 
 def validate_update_cooldown(user: User) -> None:
     """
-    Let's the user update their information only after 7 days.
+    Lets the user update their information only after 7 days.
     """
 
     if user.last_updated + timedelta(seconds=7) > timezone.now():
@@ -46,14 +46,14 @@ def validate_update_cooldown(user: User) -> None:
 
 class UserReadSerializer(serializers.ModelSerializer):
     """
-    This is to fetch all the user's basic information. Mostly for the profile page
+    This is to fetch all the user"s basic information. Mostly for the profile page
     but also for frontend authentication context purposes.
     """
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 
-                    'bio', 'date_joined', 'role', 'image']
+        fields = ["username", "first_name", "last_name", "email", 
+                    "bio", "date_joined", "role", "image"]
         
 class UserCreateSerializer(serializers.ModelSerializer):
     """
@@ -82,12 +82,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ["username", "first_name", "last_name", "email", "password"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         user = User(**validated_data)
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data["password"])
         user.save()
         return user
     
@@ -125,5 +125,5 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'bio']
+        fields = ["username", "first_name", "last_name", "bio"]
         

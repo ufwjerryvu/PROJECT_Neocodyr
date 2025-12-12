@@ -16,10 +16,11 @@ class User(AbstractUser):
     last_updated = models.DateTimeField(auto_now=True) 
 
     class Role(models.TextChoices):
-        ADMIN = 'admin', 'Admin'
-        USER = 'user', 'User'
-        INSTRUCTOR = 'instructor', 'Instructor'
-        STUDENT = 'student', 'Student'
+        ADMIN = "admin", "Admin"
+        USER = "user", "User"
+        INSTRUCTOR = "instructor", "Instructor"
+        STUDENT = "student", "Student"
+        AUTHOR = "author", "Author"
 
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
 
@@ -42,4 +43,4 @@ class Account(models.Model):
         db_table = "Accounts"
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
-        unique_together = [['provider', 'provider_account_id']]
+        unique_together = [["provider", "provider_account_id"]]
