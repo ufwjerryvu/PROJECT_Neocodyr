@@ -1,5 +1,5 @@
 from django.db import models
-from classes.models import Class
+from classrooms.models import Class
 from users.models import User
 
 class Posts(models.Model):
