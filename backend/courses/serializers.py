@@ -21,7 +21,7 @@ class CourseCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ["title", "description", "author_id", "is_public"]
+        fields = ["title", "description", "thumbnail", "author_id", "is_public"]
 
 class CourseOverviewReadSerializer(serializers.ModelSerializer):
     """
