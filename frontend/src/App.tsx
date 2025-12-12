@@ -13,6 +13,8 @@ import { ProfilePage } from './pages/Profile/Page';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { GuestRoute } from './routes/GuestRoute';
 import { DashboardPage } from './pages/Dashboard/Page';
+import { AuthorCreateCoursePage } from './pages/Course/Author/Page';
+import { AuthorOnlyRoute } from './routes/AuthorOnlyRoute';
 
 function App() {
   return (
@@ -27,6 +29,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+          <Route element={<AuthorOnlyRoute/>}>
+            <Route path="/author/create" element={<AuthorCreateCoursePage/>}/>
           </Route>
         </Routes>
       </AuthProvider>
