@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 
-interface ClassCardProps {
+interface CourseCardProps {
     title: string;
     description: string;
     icon?: React.ReactNode;
@@ -8,7 +8,7 @@ interface ClassCardProps {
     gradientTo?: string;
 }
 
-const ClassCard = ({ title, description, icon, gradientFrom = "from-purple-600", gradientTo = "to-blue-600" }: ClassCardProps) => {
+const CourseCard = ({ title, description, icon, gradientFrom = "from-purple-600", gradientTo = "to-blue-600" }: CourseCardProps) => {
     return (
         <div className="group relative cursor-pointer">
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition"></div>
@@ -28,4 +28,4 @@ const ClassCard = ({ title, description, icon, gradientFrom = "from-purple-600",
     );
 };
 
-export default ClassCard;
+export default CourseCard;
