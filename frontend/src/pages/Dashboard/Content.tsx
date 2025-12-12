@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { BookOpen, ChevronRight, Code2, Database, Terminal, Cpu, Brain, Laptop } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import ClassCard from '../../components/ClassCard';
+import CourseCard from '../../components/CourseCard';
 
 const DashboardPageContent = () => {
     const [user] = useAuth();
 
-    const [classCards, setClassCards] = useState<ClassCardInfo[]>([
-        {id: 1, title:"Systems Programming", description: "Learn C and multithreading at the same time", created_at: "Today"}
+    interface CourseCardInfo {
+        id: number;
+        title: string;
+        description: string;
+        created_at: string;
+    }
+
+    const [courseCards, setCourseCards] = useState<CourseCardInfo[]>([
+        { id: 1, title: "Systems Programming", description: "Learn C and multithreading at the same time", created_at: "Today" }
     ]);
 
     return (
@@ -33,14 +40,14 @@ const DashboardPageContent = () => {
                     </p>
                 </div>
 
-                {/* Class card mappings section */}
+                {/* Course card mappings section */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {classCards.map((cls, idx) => {
-                        return(
-                            <ClassCard 
+                    {courseCards.map((course, idx) => {
+                        return (
+                            <CourseCard
                                 key={idx}
-                                title={cls.title}
-                                description={cls.description}
+                                title={course.title}
+                                description={course.description}
                                 gradientFrom="from-gray-600"
                                 gradientTo="to-slate-600"
                             />
