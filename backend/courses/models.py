@@ -10,8 +10,9 @@ class Course(models.Model):
     """
 
     title = models.CharField(max_length=256, null=False)
-    description = models.TextField(null=False)
+    description = models.TextField(null=False, max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
+    thumbnail = models.ImageField(null=True, blank=True)
 
     # Author is automatically and instructor. Checks needed. 
     author = models.ForeignKey(User, null=False, on_delete=models.CASCADE,
