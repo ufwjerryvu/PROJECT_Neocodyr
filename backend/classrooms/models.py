@@ -13,7 +13,7 @@ class Class(models.Model):
     description = models.TextField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Author is automatically and instructor. Checks needed. 
+    # Author is automatically an instructor. Checks needed. 
     author = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     instructors = models.ManyToManyField(User)
     students = models.ManyToManyField(User)

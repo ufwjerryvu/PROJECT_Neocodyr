@@ -6,7 +6,7 @@ from rest_framework import status
 
 from rest_framework import permissions
 
-from ..classes.models import ClassStudent, ClassInstructor
+from ..classrooms.models import Class
 from .models import Posts
 from .serializers import PostsSerializer, PostUpdateSerializer
 
@@ -65,14 +65,13 @@ class BatchPostsView(APIView):
     """
     Endpoint for retrieving all posts.
     """
-
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, class_id):
         # Check if they can view the posts
         user_id = request.user.id
-        students = ClassStudent.objects.filter(class_=class_id).filter(user_=user_id)
-        instructor = ClassInstructor.objects.filter(class_=class_id).filter(user_=user_id)
+        students = Class.objects.filter(id=class_id).filter(student=user_id)
+        instructor = Class.objects.filter(id=class_id).filter(instructor=user_id)
         if len(students) <= 0 and len(instructor) <= 0:
             return Response(
                 {"error": "You don't have permission to see these post"},
