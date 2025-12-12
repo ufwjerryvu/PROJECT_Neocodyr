@@ -1,12 +1,12 @@
 from django.db import models
 from users.models import User
 
-class Classroom(models.Model):
+class Course(models.Model):
     """
-    The model for a class/unit. Each classroom can have as little as zero 
+    The model for a course. Each course can have as little as zero 
     students and as many students as they want. Same for instructors. The
     attribute `is_public` lets the author decide whether they want to make
-    the class publicly explorable or if it's invite-only. 
+    the course publicly explorable or if it's invite-only. 
     """
 
     title = models.CharField(max_length=256, null=False)
@@ -15,15 +15,15 @@ class Classroom(models.Model):
 
     # Author is automatically and instructor. Checks needed. 
     author = models.ForeignKey(User, null=False, on_delete=models.CASCADE,
-                            related_name="authored_classrooms")
-    instructors = models.ManyToManyField(User, related_name="teaching_classrooms")
-    students = models.ManyToManyField(User, related_name="enrolled_classrooms")
+                            related_name="authored_courses")
+    instructors = models.ManyToManyField(User, related_name="teaching_courses")
+    students = models.ManyToManyField(User, related_name="enrolled_courses")
     is_public = models.BooleanField(default=True)
 
     class Meta:
-        db_table = "Classrooms"
-        verbose_name = "Classroom"
-        verbose_name_plural = "Classrooms"
+        db_table = "Courses"
+        verbose_name = "Course"
+        verbose_name_plural = "Courses"
 
 class Lesson(models.Model):
     """
@@ -32,7 +32,7 @@ class Lesson(models.Model):
     """
 
     title = models.CharField(null=False, max_length=256)
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -40,4 +40,4 @@ class Lesson(models.Model):
         db_table = "Lessons"
         verbose_name = "Lesson"
         verbose_name_plural = "Lessons"
-        unique_together = [["classroom", "order"]]
+        unique_together = [["course", "order"]]
