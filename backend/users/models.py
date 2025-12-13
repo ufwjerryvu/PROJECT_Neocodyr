@@ -1,14 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+def user_avatar_path(instance, filename):
+    """
+    Defines avatar (profile picture) path for users based on their ID.
+    """
+    return f"users/avatars/{instance.id}/{filename}"
+
 class User(AbstractUser):
     """
     Extends Django's AbstractUser with role-based access and OAuth support.
     Supports both JWT authentication and social login via Account model.
     """
-
+    
     email = models.EmailField(unique=True)
-    image = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    image = models.ImageField(upload_to=user_avatar_path, blank=True, null=True)
     verified = models.DateTimeField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
 

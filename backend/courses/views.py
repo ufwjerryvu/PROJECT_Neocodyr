@@ -34,6 +34,6 @@ class CourseAuthoredReadViews(APIView):
 
     def get(self, request):
         serializer = CourseOverviewReadSerializer(data=request.data)
-        # TODO: complete this
+        # TODO: implement this later
         return 
     

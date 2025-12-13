@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework.validators import UniqueValidator
 from .models import User
 import re
+import os
 
 def validate_username_format(value: str) -> str:
     """
@@ -43,7 +44,6 @@ def validate_update_cooldown(user: User) -> None:
             "Must wait the full 7 days to update details again."
         )
                   
-
 class UserReadSerializer(serializers.ModelSerializer):
     """
     This is to fetch all the user"s basic information. Mostly for the profile page
@@ -127,3 +127,22 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "first_name", "last_name", "bio"]
         
+class UserAvatarUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer that only allows user to upload a profile picture
+    image. 
+    """
+    def update(self, instance, validated_data):
+        # Delete old
+        if instance.image:
+            instance.image.delete(save=False)
+        
+        # Update new
+        instance.image = validated_data.get("image")
+        instance.save(update_fields=["image"])
+        
+        return instance
+
+    class Meta:
+        model = User
+        fields = ["image"]
