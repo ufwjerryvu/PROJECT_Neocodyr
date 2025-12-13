@@ -50,8 +50,14 @@ export const userService = {
         return user;
     },
 
-    updateUser: async(updateInfo: UpdateUserInfo) => {
+    updateUserInfo: async(updateInfo: UpdateUserInfo) => {
         const response = await api.patch("/users/me/", updateInfo);
+        const updated = response.data;
+        return updated;
+    },
+
+    updateUserPicture: async(formData: FormData) => {
+        const response = await api.patch("/users/me/avatar/", formData);
         const updated = response.data;
         return updated;
     }
