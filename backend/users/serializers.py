@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework.validators import UniqueValidator
 from .models import User
 import re
+import os
 
 def validate_username_format(value: str) -> str:
     """
@@ -132,6 +133,12 @@ class UserAvatarUpdateSerializer(serializers.ModelSerializer):
     Serializer that only allows user to upload a profile picture
     image. 
     """
+    def update(self, instance, validated_data):
+        # Override save to avoid double write
+        instance.image.delete(save=False) 
+
+        # This saves again anyway.
+        return super().update(instance, validated_data)
 
     class Meta:
         model = User
