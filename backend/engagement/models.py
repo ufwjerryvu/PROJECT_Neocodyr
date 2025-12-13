@@ -1,7 +1,7 @@
 from django.db import models
-from ..users.models import User
-from ..posting.models import Posts
-from ..comments.models import Comments
+from users.models import User
+from posting.models import Posts
+from comments.models import Comments
 
 
 class LikesPost(models.Model):

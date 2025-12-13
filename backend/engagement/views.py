@@ -22,7 +22,7 @@ class ReactsPostView(APIView):
         return Response({"error": "Failed to like the post"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post_id):
-        delete_result = LikesComment.objects.filter(
+        delete_result = LikesPost.objects.filter(
             user = request.user.id,
             comment=post_id
         ).delete()
