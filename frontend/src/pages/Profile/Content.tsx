@@ -15,6 +15,7 @@ interface EditMode {
 
 const ProfilePageContent = () => {
     const [, setUser,] = useAuth();
+    const [hasEditedAvatar, setHasEditedAvatar] = useState(false);
     const [hasEdited, setHasEdited] = useState(false);
     const [editMode, setEditMode] = useState<EditMode>({
         username: false,
@@ -76,7 +77,7 @@ const ProfilePageContent = () => {
                 lastName: user.last_name,
                 email: user.email,
                 bio: user.bio,
-                
+
                 profilePicture: user.image ? 
                     `${process.env.REACT_APP_STATIC_URL}${user.image}` : null,
                 
@@ -110,7 +111,7 @@ const ProfilePageContent = () => {
 
     const handleSubmitChanges = async () => {
         /* If profile picture update */
-        if (editMode.profilePicture) {
+        if (hasEditedAvatar) {
             try {
                 const formData = new FormData();
                 if (selectedProfilePicture) {
@@ -134,21 +135,15 @@ const ProfilePageContent = () => {
 
                 console.log(`${process.env.REACT_APP_STATIC_URL}${response.image}`);
 
-                setHasEdited(false);
+                setHasEditedAvatar(false);
                 setOriginalProfileData(profileData);
-                setEditMode((prev) => ({ ...prev, profilePicture: false }));
-
             } catch (error: any) {
                 setEditMode((prev) => ({ ...prev, profilePicture: false }));
-
+                setHasEditedAvatar(false);
             }
         }
 
-        /* If none of the other updates then we don't call the endpoint.
-            Bit convoluted */
-        if (!(editMode.username || editMode.firstName ||
-            editMode.lastName || editMode.bio
-        )) {
+        if(!hasEdited){
             return;
         }
 
@@ -222,7 +217,7 @@ const ProfilePageContent = () => {
             setSelectedProfilePicture(e.target.files[0]);
 
             setEditMode((prev) => ({ ...prev, profilePicture: true }));
-            setHasEdited(true);
+            setHasEditedAvatar(true);
 
             /* Preview the image */
             const reader = new FileReader();
@@ -488,7 +483,7 @@ const ProfilePageContent = () => {
                             </div>
 
                             {/* Save Button */}
-                            {hasEdited && (
+                            {(hasEdited || hasEditedAvatar) && (
                                 <div className="mt-8 pt-8 border-t border-slate-700/50">
                                     <button onClick={() => handleClickSaveAllChanges()}
                                         className="w-full px-6 py-3 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] font-medium">
