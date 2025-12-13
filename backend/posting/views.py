@@ -26,7 +26,7 @@ class CreatePostView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request):
+    def post(self, request):
         post = request.data
         serializer_class = PostsSerializer(data=post)
 
