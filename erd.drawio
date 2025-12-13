@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.4">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.7">
   <diagram name="Page-1" id="4AEv1W-PqznHKnVDw7jH">
-    <mxGraphModel dx="2106" dy="1867" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2253" dy="2046" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1870,7 +1870,7 @@
             <mxRectangle height="30" width="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="G677t-6jYDAdRceBPksr-19" parent="G677t-6jYDAdRceBPksr-17" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="post_id: TIMESTAMP" vertex="1">
+        <mxCell id="G677t-6jYDAdRceBPksr-19" parent="G677t-6jYDAdRceBPksr-17" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="post_id: BIGINT NOT NULL" vertex="1">
           <mxGeometry height="30" width="290" x="30" as="geometry">
             <mxRectangle height="30" width="290" as="alternateBounds" />
           </mxGeometry>
@@ -1928,7 +1928,7 @@
             <mxRectangle height="30" width="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="G677t-6jYDAdRceBPksr-34" parent="G677t-6jYDAdRceBPksr-32" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="comment_id: TIMESTAMP" vertex="1">
+        <mxCell id="G677t-6jYDAdRceBPksr-34" parent="G677t-6jYDAdRceBPksr-32" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" value="comment_id: BIGINT NOT NULL" vertex="1">
           <mxGeometry height="30" width="290" x="30" as="geometry">
             <mxRectangle height="30" width="290" as="alternateBounds" />
           </mxGeometry>
