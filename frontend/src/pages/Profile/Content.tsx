@@ -76,7 +76,10 @@ const ProfilePageContent = () => {
                 lastName: user.last_name,
                 email: user.email,
                 bio: user.bio,
-                profilePicture: `${process.env.REACT_APP_STATIC_URL}${user.image}`,
+                
+                profilePicture: user.image ? 
+                    `${process.env.REACT_APP_STATIC_URL}${user.image}` : null,
+                
                 dateJoined: new Date(user.date_joined).toLocaleDateString(
                     'en-GB',
                     {
