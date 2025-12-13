@@ -127,3 +127,12 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "first_name", "last_name", "bio"]
         
+class UserAvatarUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer that only allows user to upload a profile picture
+    image. 
+    """
+
+    class Meta:
+        model = User
+        fields = ["image"]

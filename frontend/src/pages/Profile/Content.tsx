@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { User, Mail, Calendar, Edit2, Camera, Plus, Check, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userService } from '../../services/userService';
@@ -9,17 +9,19 @@ interface EditMode {
     username: boolean,
     firstName: boolean,
     lastName: boolean,
-    bio: boolean;
+    bio: boolean,
+    profilePicture: boolean
 }
 
 const ProfilePageContent = () => {
-    const [,setUser,] = useAuth();
+    const [, setUser,] = useAuth();
     const [hasEdited, setHasEdited] = useState(false);
     const [editMode, setEditMode] = useState<EditMode>({
         username: false,
         firstName: false,
         lastName: false,
-        bio: false
+        bio: false,
+        profilePicture: false
     });
 
     interface ProfileData {
@@ -53,7 +55,7 @@ const ProfilePageContent = () => {
 
     const handleEditCancelClick = (field: keyof EditMode) => {
         setEditMode((prev) => ({ ...prev, [field]: false }));
-        setProfileData((prev) => ({...prev, [field]: originalProfileData[field]}));
+        setProfileData((prev) => ({ ...prev, [field]: originalProfileData[field] }));
     }
 
     const handleEditSaveClick = (field: keyof EditMode) => {
@@ -74,7 +76,7 @@ const ProfilePageContent = () => {
                 lastName: user.last_name,
                 email: user.email,
                 bio: user.bio,
-                profilePicture: user.image,
+                profilePicture: `${process.env.REACT_APP_STATIC_URL}${user.image}`,
                 dateJoined: new Date(user.date_joined).toLocaleDateString(
                     'en-GB',
                     {
@@ -104,9 +106,52 @@ const ProfilePageContent = () => {
     } | null>(null);
 
     const handleSubmitChanges = async () => {
-        try {
+        /* If profile picture update */
+        if (editMode.profilePicture) {
+            try {
+                const formData = new FormData();
+                if (selectedProfilePicture) {
+                    formData.append("image", selectedProfilePicture);
+                }
+                const response = await userService.updateUserPicture(formData);
 
-            await userService.updateUser({
+                /* Update user info in local storage for conditional authentication
+                    rendering */
+                localStorage.removeItem("userInfo");
+                const userInfo = await userService.getUser();
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                setUser(userInfo);
+
+                if(response.image){
+                    setProfileData((prev) => ({
+                        ...prev, 
+                        profilePicture: `${process.env.REACT_APP_STATIC_URL}${response.image}`
+                    }))
+                }
+
+                console.log(`${process.env.REACT_APP_STATIC_URL}${response.image}`);
+
+                setHasEdited(false);
+                setOriginalProfileData(profileData);
+                setEditMode((prev) => ({ ...prev, profilePicture: false }));
+
+            } catch (error: any) {
+                setEditMode((prev) => ({ ...prev, profilePicture: false }));
+
+            }
+        }
+
+        /* If none of the other updates then we don't call the endpoint.
+            Bit convoluted */
+        if (!(editMode.username || editMode.firstName ||
+            editMode.lastName || editMode.bio
+        )) {
+            return;
+        }
+
+        /* Literally any other update */
+        try {
+            await userService.updateUserInfo({
                 username: profileData.username!,
                 first_name: profileData.firstName!,
                 last_name: profileData.lastName!,
@@ -165,6 +210,27 @@ const ProfilePageContent = () => {
         }
     }
 
+    /* Profile picture selection */
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [selectedProfilePicture, setSelectedProfilePicture] = useState<File | null>(null);
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        /* Check if the array is not null */
+        if (e.target.files && e.target.files[0]) {
+            setSelectedProfilePicture(e.target.files[0]);
+
+            setEditMode((prev) => ({ ...prev, profilePicture: true }));
+            setHasEdited(true);
+
+            /* Preview the image */
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfileData((prev) => ({ ...prev, profilePicture: reader.result as string }));
+            }
+
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    }
+
     return (
         <main className="min-h-screen px-8 py-20">
             <div className="max-w-4xl mx-auto">
@@ -210,7 +276,18 @@ const ProfilePageContent = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <button className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-full flex items-center justify-center shadow-lg transition">
+
+                                    {/* Profile Picture Selection Section */}
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleProfilePictureChange}
+                                    />
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-full flex items-center justify-center shadow-lg transition">
                                         <Camera className="w-5 h-5 text-white" />
                                     </button>
                                 </div>

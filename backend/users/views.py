@@ -6,7 +6,8 @@ from rest_framework import status
 from .serializers import (
     UserCreateSerializer, 
     UserReadSerializer, 
-    UserUpdateSerializer
+    UserUpdateSerializer,
+    UserAvatarUpdateSerializer
 )
 
 from rest_framework import permissions
@@ -53,3 +54,19 @@ class UserUpdateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class UserAvatarUpdateView(APIView):
+    """
+    Endpoint for updating a user image (avatar).
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        serializer = UserAvatarUpdateSerializer(request.user, 
+                                                data=request.data,
+                                                partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
