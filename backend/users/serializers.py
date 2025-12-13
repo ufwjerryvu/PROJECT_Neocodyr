@@ -44,7 +44,6 @@ def validate_update_cooldown(user: User) -> None:
             "Must wait the full 7 days to update details again."
         )
                   
-
 class UserReadSerializer(serializers.ModelSerializer):
     """
     This is to fetch all the user"s basic information. Mostly for the profile page
@@ -134,11 +133,15 @@ class UserAvatarUpdateSerializer(serializers.ModelSerializer):
     image. 
     """
     def update(self, instance, validated_data):
-        # Override save to avoid double write
-        instance.image.delete(save=False) 
-
-        # This saves again anyway.
-        return super().update(instance, validated_data)
+        # Delete old
+        if instance.image:
+            instance.image.delete(save=False)
+        
+        # Update new
+        instance.image = validated_data.get("image")
+        instance.save(update_fields=["image"])
+        
+        return instance
 
     class Meta:
         model = User

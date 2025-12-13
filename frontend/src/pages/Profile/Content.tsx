@@ -78,9 +78,9 @@ const ProfilePageContent = () => {
                 email: user.email,
                 bio: user.bio,
 
-                profilePicture: user.image ? 
+                profilePicture: user.image ?
                     `${process.env.REACT_APP_STATIC_URL}${user.image}` : null,
-                
+
                 dateJoined: new Date(user.date_joined).toLocaleDateString(
                     'en-GB',
                     {
@@ -126,9 +126,9 @@ const ProfilePageContent = () => {
                 localStorage.setItem("userInfo", JSON.stringify(userInfo));
                 setUser(userInfo);
 
-                if(response.image){
+                if (response.image) {
                     setProfileData((prev) => ({
-                        ...prev, 
+                        ...prev,
                         profilePicture: `${process.env.REACT_APP_STATIC_URL}${response.image}`
                     }))
                 }
@@ -137,13 +137,27 @@ const ProfilePageContent = () => {
 
                 setHasEditedAvatar(false);
                 setOriginalProfileData(profileData);
+
+                setStatusBoxInfo({
+                    type: "success",
+                    text: "Profile picture updated successfully!"
+                });
+
+                setTimeout(() => setStatusBoxInfo(null), 10000);
             } catch (error: any) {
                 setEditMode((prev) => ({ ...prev, profilePicture: false }));
                 setHasEditedAvatar(false);
+
+                setStatusBoxInfo({
+                    type: "error",
+                    text: error.response?.data?.image || "Failed to update profile picture"
+                });
+
+                setTimeout(() => setStatusBoxInfo(null), 60000);
             }
         }
 
-        if(!hasEdited){
+        if (!hasEdited) {
             return;
         }
 
