@@ -6,12 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('comments', '0002_initial'),
+        ('posting', '0002_initial'),
     ]
 
     operations = [
-        migrations.AlterModelTable(
-            name='commenthierarchytable',
-            table='CommentHierarchy',
+        migrations.RenameField(
+            model_name='posts',
+            old_name='class_id',
+            new_name='course_id',
         ),
     ]
