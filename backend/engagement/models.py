@@ -10,8 +10,8 @@ class LikesPost(models.Model):
     such that the user cannot like / react to the same post multiple times. 
     """
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, null=False, blank=False)
-    post = models.ForeignKey(Posts, null=False, blank=False)
+    user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
+    post = models.ForeignKey(Posts, null=False, blank=False, on_delete=models.CASCADE)
     
     class Meta:
         constraints = [
@@ -24,8 +24,8 @@ class LikesComment(models.Model):
     such that user cannot like / react to the same comment multiple times.
     """
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, null=False, blank=False)
-    comment = models.ForeignKey(Comments, null=False, blank=False)
+    user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comments, null=False, blank=False, on_delete=models.CASCADE)
     
     class Meta:
         constraints = [
