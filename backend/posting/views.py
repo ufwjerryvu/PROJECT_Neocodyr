@@ -51,10 +51,10 @@ class UpdatePostsView(APIView):
 
     def patch(self, request, post_id):
         new_content = request.data
-        new_content_serializer = PostUpdateSerializer(new_content)
+        serializer = PostUpdateSerializer(new_content)
 
-        if new_content_serializer.is_valid():
-            author_id = new_content_serializer.data.get("author_id", -1)
+        if serializer.is_valid():
+            author_id = serializer.data.get("author_id", -1)
 
             if author_id < 0 or author_id != request.user.id:
                 return Response(
@@ -64,16 +64,16 @@ class UpdatePostsView(APIView):
             
             if len(post_id) >= 0:
                 return Response(
-                    new_content_serializer.errors,
+                    serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
             post = Posts.object.filter(id=post_id)
-            updated_post = PostsSerializer(post, new_content_serializer.data)
+            updated_post = PostsSerializer(post, serializer.data)
             return Response(updated_post.data, status=status.HTTP_200_OK)
         
         return Response(
-            new_content_serializer.errors,
+            serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -87,7 +87,7 @@ class GetPostsView(APIView):
         post = Posts.objects.filter(id=post_id)
         serializer = PostsSerializer(post)
 
-        if serializer.s_valid():
+        if serializer.is_valid():
             serializer.save()
             return Response(
                 serializer.data,
