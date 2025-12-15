@@ -14,12 +14,12 @@ class ReactsPostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
-        serializer_class = PostLikeSerializer(data=request.data)
-        if serializer_class.is_valid():
-            serializer_class.save()
-            return Response(serializer_class.data, status=status.HTTP_201_CREATED)
+        serializer = PostLikeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post_id):
         try:
@@ -39,12 +39,12 @@ class ReactsCommentView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
-        serializer_class = CommentLikeSerializer(data=request.data)
-        if serializer_class.is_valid():
-            serializer_class.save()
-            return Response(serializer_class.data, status=status.HTTP_201_CREATED)
+        serializer = CommentLikeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, comment_id):
         try:
