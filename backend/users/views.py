@@ -19,12 +19,12 @@ class UserRegisterView(APIView):
     """
 
     permission_classes = [permissions.AllowAny]
-    serializer = UserCreateSerializer
+    serializer_class = UserCreateSerializer
 
     # NOTE: serializer class attribute is needed for browsable DRF APIs
     
     def post(self, request):
-        serializer = self.serializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
