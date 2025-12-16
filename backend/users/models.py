@@ -1,14 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+def user_avatar_path(instance, filename):
+    """
+    Defines avatar (profile picture) path for users based on their ID.
+    """
+    return f"users/avatars/{instance.id}/{filename}"
+
 class User(AbstractUser):
     """
     Extends Django's AbstractUser with role-based access and OAuth support.
     Supports both JWT authentication and social login via Account model.
     """
-
+    
     email = models.EmailField(unique=True)
-    image = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    image = models.ImageField(upload_to=user_avatar_path, blank=True, null=True)
     verified = models.DateTimeField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
 
@@ -16,10 +22,11 @@ class User(AbstractUser):
     last_updated = models.DateTimeField(auto_now=True) 
 
     class Role(models.TextChoices):
-        ADMIN = 'admin', 'Admin'
-        USER = 'user', 'User'
-        INSTRUCTOR = 'instructor', 'Instructor'
-        STUDENT = 'student', 'Student'
+        ADMIN = "admin", "Admin"
+        USER = "user", "User"
+        INSTRUCTOR = "instructor", "Instructor"
+        STUDENT = "student", "Student"
+        AUTHOR = "author", "Author"
 
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
 
@@ -42,4 +49,4 @@ class Account(models.Model):
         db_table = "Accounts"
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
-        unique_together = [['provider', 'provider_account_id']]
+        unique_together = [["provider", "provider_account_id"]]

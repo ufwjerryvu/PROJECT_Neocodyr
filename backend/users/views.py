@@ -2,18 +2,17 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils import timezone
-from datetime import timedelta
 
 from .serializers import (
     UserCreateSerializer, 
     UserReadSerializer, 
-    UserUpdateSerializer
+    UserUpdateSerializer,
+    UserAvatarUpdateSerializer
 )
 
-from rest_framework import permissions, viewsets
+from rest_framework import permissions
 
-class RegisterView(APIView):
+class UserRegisterView(APIView):
     """
     For the purpose of registering a user. Required fields are specified
     in the user create serializer.
@@ -48,10 +47,27 @@ class UserUpdateView(APIView):
         user = request.user
 
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)
-
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class UserAvatarUpdateView(APIView):
+    """
+    Endpoint for updating a user image (avatar).
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        serializer = UserAvatarUpdateSerializer(request.user, 
+                                                data=request.data,
+                                                partial=True)
+        
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
