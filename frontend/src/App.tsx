@@ -36,7 +36,6 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/forum/:id" element={<ForumPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/test" element={<TestPage />} />
           </Route>
