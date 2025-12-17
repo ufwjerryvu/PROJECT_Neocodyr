@@ -8,6 +8,39 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
+const Dropdown = () => {
+  const [value, setValue] = useState("");
+
+  return (
+    <select
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      className="
+        bg-slate-900
+        text-slate-100
+        border border-slate-700
+        rounded-md
+        px-3 py-2
+        focus:outline-none
+        focus:ring-2
+        focus:ring-slate-600
+        text-xs
+        w-full 
+      "
+    >
+      <option value="" disabled className="bg-slate-900">
+        All
+      </option>
+      <option value="frontend" className="bg-slate-900">
+        Student
+      </option>
+      <option value="backend" className="bg-slate-900">
+        Staff
+      </option>
+    </select>
+  );
+};
+
 const ForumContentPage = () => {
   interface Comment {
     id: number;
@@ -147,6 +180,8 @@ const ForumContentPage = () => {
 
   const [activePost, setActivePost] = useState<Post>(posts[0]);
   const [showMobileDetail, setShowMobileDetail] = useState(false);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const [showSidebar, setShowSidebar] = useState(true);
   const [showThreadList, setShowThreadList] = useState(true);
@@ -234,25 +269,41 @@ const ForumContentPage = () => {
           </button>
 
           <div>
-            <h4 className="text-xs uppercase text-slate-400 mb-2">Courses</h4>
-            <ul className="space-y-1 text-sm">
-              <li className="text-slate-300">CS 101</li>
-              <li className="text-slate-300">ECON 102</li>
-              <li className="text-slate-300">MATH 201</li>
-              <li className="text-slate-300">ENGG 202</li>
-              <li className="text-blue-400 font-medium">Playground</li>
-            </ul>
+            <h4 className="text-md uppercase text-slate-400 mb-2">Filters</h4>
+            <Dropdown />
+            <div className="flex flex-col mt-3 gap-2">
+              <div>
+                <label className="text-xs text-slate-400 mb-1 block">
+                  From
+                </label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="bg-slate-900 text-slate-100 border border-slate-700 rounded-md px-3 py-2 text-xs w-full"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-slate-400 mb-1 block">To</label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="bg-slate-900 text-slate-100 border border-slate-700 rounded-md px-3 py-2 text-xs w-full"
+                />
+              </div>
+            </div>
           </div>
 
           <div>
-            <h4 className="text-xs uppercase text-slate-400 mb-2">
+            <h4 className="text-md uppercase text-slate-400 mb-2">
               Categories
             </h4>
-            <ul className="space-y-1 text-sm">
+            <ul className="space-y-1 scrollview overflow-y-auto h-screen text-sm">
               <li className="text-slate-300">General</li>
-              <li className="text-green-400">Lectures</li>
-              <li className="text-yellow-400">Tutorials</li>
-              <li className="text-red-400">Assignments</li>
+              <li className="text-green-400">Tutorials</li>
+              <li className="text-yellow-400">Assignments</li>
             </ul>
           </div>
         </aside>
@@ -312,7 +363,7 @@ const ForumContentPage = () => {
       <section
         className={`${
           showMobileDetail ? "flex" : "hidden"
-        } md:flex flex-1 flex-col scrollview overflow-y-auto p-4 md:p-8 lg:p-10 max-w-full lg:max-w-4xl mx-auto w-full`}
+        } md:flex flex-1 flex-col scrollview overflow-y-auto p-4 md:p-8 lg:p-10 max-w-full lg:max-w-6xl mx-auto w-full`}
       >
         {/* Mobile back button */}
         <button
@@ -325,7 +376,7 @@ const ForumContentPage = () => {
           <div className="bg-slate-900/80 p-5 rounded-xl">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-3xl font-semibold">{activePost.title}</h1>
-              <div className="hidden lg:flex items-center gap-2">
+              {/* <div className="hidden lg:flex items-center gap-2">
                 <button
                   onClick={() => setShowSidebar((v) => !v)}
                   className="px-3 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700"
@@ -338,7 +389,7 @@ const ForumContentPage = () => {
                 >
                   Toggle Threads
                 </button>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex items-center gap-4 text-sm text-slate-400 mb-6">
