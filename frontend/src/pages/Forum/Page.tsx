@@ -10,7 +10,6 @@ export const ForumPage = () => {
     <Background>
       <Navbar variant={"landing"} />
       <ForumPageContent />
-      <Footer />
     </Background>
   );
 };
