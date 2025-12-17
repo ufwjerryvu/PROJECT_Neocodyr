@@ -16,6 +16,7 @@ export const courseService = {
         if (data.thumbnail) {
             formData.append("thumbnail", data.thumbnail);
         }
+        formData.append("is_public", data.is_public.toString());
 
         const response = await api.post("/courses/authors/me/", formData);
 

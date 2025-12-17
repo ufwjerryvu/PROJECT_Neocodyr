@@ -508,6 +508,7 @@ const ProfilePageContent = () => {
                         </div>
                     </div>
                 </div>
+                
                 {/* Cooldown Period Warning Modal */}
                 {showCooldownWarning && (
                     <AlertModal
