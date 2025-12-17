@@ -71,7 +71,6 @@ const DashboardPageContent = () => {
                 description={course.description}
                 gradientFrom="from-gray-600"
                 gradientTo="to-slate-600"
-                onClick={() => navigate(`/forum/${course.forum_id}`)}
               />
             );
           })}
