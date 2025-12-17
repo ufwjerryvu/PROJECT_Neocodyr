@@ -6,19 +6,17 @@ interface CourseCardProps {
   icon?: React.ReactNode;
   gradientFrom?: string;
   gradientTo?: string;
-  onClick?: () => void;
 }
 
 const CourseCard = ({
   title,
   description,
   icon,
-  onClick,
   gradientFrom = "from-purple-600",
   gradientTo = "to-blue-600",
 }: CourseCardProps) => {
   return (
-    <div onClick={onClick} className="group relative cursor-pointer">
+    <div className="group relative cursor-pointer">
       <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition"></div>
 
       <div className="relative bg-gradient-to-br from-slate-900/90 to-indigo-950/90 backdrop-blur-xl rounded-xl overflow-hidden border border-purple-500/40 shadow-xl p-6 hover:border-purple-400/60 transition h-full flex flex-col">
