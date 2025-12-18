@@ -1,2 +1,6 @@
 .DS_Store
 .vscode/
+
+# Django migrations
+**/migrations/*
+!**/migrations/__init__.py
