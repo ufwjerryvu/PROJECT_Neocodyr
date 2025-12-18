@@ -17,11 +17,11 @@ class CourseCreateSerializer(serializers.ModelSerializer):
     """
 
     title = serializers.CharField(allow_blank=False)
-    description = serializers.CharField(allow_blank=True)
+    description = serializers.CharField(allow_blank=False)
 
     class Meta:
         model = Course
-        fields = ["title", "description", "thumbnail", "author_id", "is_public"]
+        fields = ["id", "title", "description", "thumbnail", "author_id", "is_public"]
 
 class CourseOverviewReadSerializer(serializers.ModelSerializer):
     """

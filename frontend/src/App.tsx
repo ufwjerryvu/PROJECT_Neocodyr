@@ -31,7 +31,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route element={<AuthorOnlyRoute/>}>
-            <Route path="/author/create" element={<AuthorCreateCoursePage/>}/>
+            <Route path="/author/course/create" element={<AuthorCreateCoursePage/>}/>
           </Route>
         </Routes>
       </AuthProvider>
