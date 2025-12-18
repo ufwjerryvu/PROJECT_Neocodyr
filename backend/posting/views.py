@@ -26,20 +26,20 @@ class CreatePostView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request):
+    def post(self, request):
         post = request.data
-        serializer_class = PostsSerializer(data=post)
+        serializer = PostsSerializer(data=post)
 
-        if serializer_class.is_valid():
-            serializer_class.save()
+        if serializer.is_valid():
+            serializer.save()
 
             return Response(
-                serializer_class.data,
+                serializer.data,
                 status=status.HTTP_200_OK
             )
         
         return Response(
-            serializer_class.errors,
+            serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -85,17 +85,17 @@ class GetPostsView(APIView):
 
     def get(self, request, post_id):
         post = Posts.objects.filter(id=post_id)
-        serializer_class = PostsSerializer(post)
+        serializer = PostsSerializer(post)
 
-        if serializer_class.s_valid():
-            serializer_class.save()
+        if serializer.s_valid():
+            serializer.save()
             return Response(
-                serializer_class.data,
+                serializer.data,
                 status=status.HTTP_200_OK
             )
         
         return Response(
-            serializer_class.errors,
+            serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
 
