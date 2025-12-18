@@ -21,6 +21,7 @@ def validate_username_format(value: str) -> str:
     
     return value
 
+
 def validate_name_format(value: str) -> str:
     """
     Enforces name fields (i.e., first name and last name) cannot have anything
@@ -64,7 +65,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         required=True, 
         allow_blank=False, 
-        validators=[validate_username_format])
+        validators=[
+            validate_username_format,
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
     
     first_name = serializers.CharField(
         required=True, 
@@ -76,8 +81,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
         allow_blank=False,
         validators=[validate_name_format]
     )
+
+    email = serializers.EmailField(
+        required=True,
+        allow_blank=False,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
     
-    email = serializers.EmailField(required=True, allow_blank=False)
     password = serializers.CharField(required=True, min_length=8)
 
     class Meta:
@@ -116,6 +128,13 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         allow_blank=False,
         validators=[
             validate_name_format
+        ]
+    )
+
+    email = serializers.EmailField(
+        allow_blank=False,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
         ]
     )
 
