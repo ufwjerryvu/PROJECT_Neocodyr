@@ -128,7 +128,7 @@ const ProfilePageContent = () => {
     };
 
     const isAnyFieldInEditMode = (): boolean => {
-        return editMode.username || editMode.firstName || editMode.lastName || editMode.bio || editMode.profilePicture;
+        return editMode.username || editMode.firstName || editMode.lastName || editMode.bio;
     };
 
     const handleClickSaveAllChanges = () => {
@@ -212,7 +212,6 @@ const ProfilePageContent = () => {
     const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setSelectedProfilePicture(e.target.files[0]);
-            setEditMode((prev) => ({ ...prev, profilePicture: true }));
 
             const reader = new FileReader();
             reader.onloadend = () => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Rocket, Mail, Lock, User } from 'lucide-react';
 import { BasicUserInfo, userService } from '../../services/userService';
 import { useNavigate } from 'react-router-dom';
-import StatusBox from '../../components/StatusBox';
+import AlertModal from '../../components/AlertModal';
 
 const RegisterPageContent = () => {
     const [formData, setFormData] = useState({
@@ -14,18 +14,38 @@ const RegisterPageContent = () => {
         confirmPassword: ''
     });
 
+    const [fieldErrors, setFieldErrors] = useState<{
+        firstName?: string,
+        lastName?: string,
+        username?: string,
+        email?: string,
+        password?: string,
+        confirmPassword?: string
+    }>({});
+
     const navigate = useNavigate();
 
-    interface StatusBoxProps {
+    interface AlertState {
         type: "error" | "success",
-        text: string
+        title: string,
+        message: string
     }
 
-    const [message, setMessage] = useState<StatusBoxProps | null>(null);
+    const [alert, setAlert] = useState<AlertState | null>(null);
 
     const handleRegisterSubmit = async (e: React.MouseEvent) => {
+        e.preventDefault();
+
         if (formData.password !== formData.confirmPassword) {
-            setMessage({ type: "error", text: "Passwords do not match" })
+            setFieldErrors((prev) => ({ 
+                ...prev, 
+                confirmPassword: "Passwords do not match" 
+            }));
+            setAlert({ 
+                type: "error", 
+                title: "Validation Error",
+                message: "Passwords do not match" 
+            });
             return;
         }
 
@@ -46,30 +66,43 @@ const RegisterPageContent = () => {
                 role: response.role
             }
 
-            setMessage({
-                    type: "success",
-                    text: "Successfully registered! Redirecting to login..."
-                })
+            setAlert({
+                type: "success",
+                title: "Registration Successful",
+                message: "Redirecting to login..."
+            })
 
             setTimeout(() => {
                 navigate("/login");
-            }, 500);
+            }, 1500);
         } catch (error: any) {
             if (error.response?.status === 400) {
-                setMessage({
+                const errors = error.response?.data || {};
+                
+                setFieldErrors({
+                    firstName: errors.first_name?.[0],
+                    lastName: errors.last_name?.[0],
+                    username: errors.username?.[0],
+                    email: errors.email?.[0],
+                    password: errors.password?.[0]
+                });
+
+                setAlert({
                     type: "error",
-                    text: "Username or email already exists or you entered an \
-                        invalid value"
-                })
+                    title: "Registration Failed",
+                    message: "Please fix the errors and try again."
+                });
             } else if (error.response?.status >= 500) {
-                setMessage({
+                setAlert({
                     type: "error",
-                    text: "A server error has occurred"
+                    title: "Server Error",
+                    message: "A server error has occurred"
                 })
             } else {
-                setMessage({
+                setAlert({
                     type: "error",
-                    text: "An unknown error has occurred"
+                    title: "Error",
+                    message: "An unknown error has occurred"
                 })
             }
             console.error(error);
@@ -78,6 +111,15 @@ const RegisterPageContent = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center px-8 py-20">
+            <AlertModal
+                isOpen={alert !== null}
+                type={alert?.type || 'error'}
+                title={alert?.title || ''}
+                message={alert?.message || ''}
+                onClose={() => setAlert(null)}
+                onConfirm={() => setAlert(null)}
+            />
+
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 backdrop-blur-sm border border-purple-500/30 rounded-full mb-6 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
@@ -95,8 +137,6 @@ const RegisterPageContent = () => {
                     </p>
                 </div>
 
-                { message && <StatusBox type={message.type} text={message.text}/> }
-
                 <div className="relative group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition"></div>
 
@@ -112,11 +152,17 @@ const RegisterPageContent = () => {
                                         <input
                                             type="text"
                                             value={formData.firstName}
-                                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                            className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, firstName: e.target.value });
+                                                setFieldErrors((prev) => ({ ...prev, firstName: undefined }));
+                                            }}
+                                            className={`w-full pl-12 pr-4 py-3 bg-slate-900/50 border ${fieldErrors.firstName ? 'border-red-500' : 'border-purple-500/40'} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition`}
                                             placeholder="First name"
                                         />
                                     </div>
+                                    {fieldErrors.firstName && (
+                                        <p className="mt-1 text-xs text-red-400">{fieldErrors.firstName}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -128,11 +174,17 @@ const RegisterPageContent = () => {
                                         <input
                                             type="text"
                                             value={formData.lastName}
-                                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                            className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, lastName: e.target.value });
+                                                setFieldErrors((prev) => ({ ...prev, lastName: undefined }));
+                                            }}
+                                            className={`w-full pl-12 pr-4 py-3 bg-slate-900/50 border ${fieldErrors.lastName ? 'border-red-500' : 'border-purple-500/40'} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition`}
                                             placeholder="Last name"
                                         />
                                     </div>
+                                    {fieldErrors.lastName && (
+                                        <p className="mt-1 text-xs text-red-400">{fieldErrors.lastName}</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -145,11 +197,17 @@ const RegisterPageContent = () => {
                                     <input
                                         type="text"
                                         value={formData.username}
-                                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, username: e.target.value });
+                                            setFieldErrors((prev) => ({ ...prev, username: undefined }));
+                                        }}
+                                        className={`w-full pl-12 pr-4 py-3 bg-slate-900/50 border ${fieldErrors.username ? 'border-red-500' : 'border-purple-500/40'} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition`}
                                         placeholder="Choose a username"
                                     />
                                 </div>
+                                {fieldErrors.username && (
+                                    <p className="mt-1 text-xs text-red-400">{fieldErrors.username}</p>
+                                )}
                             </div>
 
                             <div>
@@ -161,11 +219,17 @@ const RegisterPageContent = () => {
                                     <input
                                         type="email"
                                         value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, email: e.target.value });
+                                            setFieldErrors((prev) => ({ ...prev, email: undefined }));
+                                        }}
+                                        className={`w-full pl-12 pr-4 py-3 bg-slate-900/50 border ${fieldErrors.email ? 'border-red-500' : 'border-purple-500/40'} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition`}
                                         placeholder="your@email.com"
                                     />
                                 </div>
+                                {fieldErrors.email && (
+                                    <p className="mt-1 text-xs text-red-400">{fieldErrors.email}</p>
+                                )}
                             </div>
 
                             <div>
@@ -177,11 +241,17 @@ const RegisterPageContent = () => {
                                     <input
                                         type="password"
                                         value={formData.password}
-                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, password: e.target.value });
+                                            setFieldErrors((prev) => ({ ...prev, password: undefined }));
+                                        }}
+                                        className={`w-full pl-12 pr-4 py-3 bg-slate-900/50 border ${fieldErrors.password ? 'border-red-500' : 'border-purple-500/40'} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition`}
                                         placeholder="••••••••"
                                     />
                                 </div>
+                                {fieldErrors.password && (
+                                    <p className="mt-1 text-xs text-red-400">{fieldErrors.password}</p>
+                                )}
                             </div>
 
                             <div>
@@ -193,11 +263,17 @@ const RegisterPageContent = () => {
                                     <input
                                         type="password"
                                         value={formData.confirmPassword}
-                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition"
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, confirmPassword: e.target.value });
+                                            setFieldErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                                        }}
+                                        className={`w-full pl-12 pr-4 py-3 bg-slate-900/50 border ${fieldErrors.confirmPassword ? 'border-red-500' : 'border-purple-500/40'} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition`}
                                         placeholder="••••••••"
                                     />
                                 </div>
+                                {fieldErrors.confirmPassword && (
+                                    <p className="mt-1 text-xs text-red-400">{fieldErrors.confirmPassword}</p>
+                                )}
                             </div>
 
                             <button
