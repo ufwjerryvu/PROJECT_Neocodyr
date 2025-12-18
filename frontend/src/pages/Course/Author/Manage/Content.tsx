@@ -22,7 +22,7 @@ const AuthorManageCoursePageContent = () => {
                                 <h1 className="text-6xl font-bold mb-2 leading-tight">
                                     <span className="block text-slate-100">Manage Course</span>
                                 </h1>
-                                <p className="text-2xl text-slate-400 mb-4">Systems Programming</p>
+                                <p className="text-2xl text-slate-400 mb-4"></p>
                                 <p className="text-lg text-slate-500">Control your course content, students, and instructors</p>
                             </div>
                         </div>

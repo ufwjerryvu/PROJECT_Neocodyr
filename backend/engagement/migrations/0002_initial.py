@@ -10,30 +10,33 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('comments', '0001_initial'),
+        ('engagement', '0001_initial'),
         ('posting', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='comments',
-            name='author_id',
+            model_name='likescomment',
+            name='user',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='comments',
-            name='post_id',
+            model_name='likespost',
+            name='post',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='posting.posts'),
         ),
         migrations.AddField(
-            model_name='commenthierarchytable',
-            name='descendant_comment',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='descendant_comment', to='comments.comments'),
+            model_name='likespost',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
-        migrations.AddField(
-            model_name='commenthierarchytable',
-            name='original_comment',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='original_comment', to='comments.comments'),
+        migrations.AddConstraint(
+            model_name='likescomment',
+            constraint=models.UniqueConstraint(fields=('user', 'comment'), name='unique_liking_comment'),
+        ),
+        migrations.AddConstraint(
+            model_name='likespost',
+            constraint=models.UniqueConstraint(fields=('user', 'post'), name='unique_liking_post'),
         ),
     ]

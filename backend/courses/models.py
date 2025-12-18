@@ -16,7 +16,7 @@ class Course(models.Model):
     """
 
     title = models.CharField(max_length=256, null=False)
-    description = models.TextField(null=False, max_length=128)
+    description = models.TextField(null=False, max_length=1024)
     created_at = models.DateTimeField(auto_now_add=True)
     thumbnail = models.ImageField(
         upload_to=course_thumbnail_path,

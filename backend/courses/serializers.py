@@ -40,3 +40,4 @@ class CourseSettingsUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ["title", "description", "thumbnail", "is_public"]
+

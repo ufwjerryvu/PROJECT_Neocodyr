@@ -19,13 +19,21 @@ export const courseService = {
         formData.append("is_public", data.is_public.toString());
 
         const response = await api.post("/courses/authors/me/", formData);
-
         return response.data;
     },
     
     getCourse: async (id: number) => {
         const response = await api.get(`/courses/${id}/`);
+        return response.data;
+    },
 
+    updateCourse: async (id: number, formData: FormData) => {
+        const response = await api.patch(`/courses/${id}/`, formData);
+        return response.data;
+    },
+
+    deleteThumbnail: async (id: number) => {
+        const response = await api.delete(`/courses/${id}/thumbnail/`);
         return response.data;
     }
 }

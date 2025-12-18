@@ -85,3 +85,28 @@ class CourseAuthoredReadView(APIView):
         serializer = CourseOverviewReadSerializer(data=request.data)
         # TODO: implement this later
         return 
+    
+class CourseThumbnailDetailView(APIView):
+    """
+    Handles course thumbnail operations for authorized users.
+    """
+
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            return [permissions.IsAuthenticated(), IsAnAuthor()]
+        
+        return [permissions.IsAuthenticated()]
+    
+    def delete(self, request, course_id):
+        user = request.user 
+        
+        try:
+            course = Course.objects.get(id=course_id)
+
+            if course.author != user:
+                raise PermissionDenied()
+            
+            course.thumbnail.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Course.DoesNotExist:
+            raise NotFound()

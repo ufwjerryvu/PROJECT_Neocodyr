@@ -1,7 +1,6 @@
 import React from 'react';
 import { GraduationCap, UserPlus, Search, Mail, Trash2 } from 'lucide-react';
 
-// Mock data
 const mockStudents = [
     {
         id: 1,
@@ -37,7 +36,6 @@ const mockStudents = [
     },
 ];
 
-// Local component for student table row
 const StudentRow = ({ student }: { student: typeof mockStudents[0] }) => {
     return (
         <tr className="border-b border-slate-700/50 hover:bg-slate-900/30 transition-colors">
