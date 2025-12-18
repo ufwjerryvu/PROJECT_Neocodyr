@@ -1,65 +1,20 @@
 import React, { useState } from "react";
 import {
-  MessageSquare,
   Clock,
   User,
   Search,
   Plus,
   ArrowLeft,
+  MessageSquare,
+  Filter,
+  X,
 } from "lucide-react";
-
-const Dropdown = () => {
-  const [value, setValue] = useState("");
-
-  return (
-    <select
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      className="
-        bg-slate-900
-        text-slate-100
-        border border-slate-700
-        rounded-md
-        px-3 py-2
-        focus:outline-none
-        focus:ring-2
-        focus:ring-slate-600
-        text-xs
-        w-full 
-      "
-    >
-      <option value="" disabled className="bg-slate-900">
-        All
-      </option>
-      <option value="frontend" className="bg-slate-900">
-        Student
-      </option>
-      <option value="backend" className="bg-slate-900">
-        Staff
-      </option>
-    </select>
-  );
-};
+import Dropdown from "../../components/Dropdown";
+import RichTextEditor from "../../components/Editor";
+import { CommentThread, CommentType } from "../../components/CommentThread";
 
 const ForumContentPage = () => {
-  interface Comment {
-    id: number;
-    author: string;
-    body: string;
-    replies?: Comment[];
-  }
-
-  interface Post {
-    id: number;
-    title: string;
-    author: string;
-    created_at: string;
-    category: string;
-    content: string;
-    comments: Comment[];
-  }
-
-  const [posts] = useState<Post[]>([
+  const [posts, setPosts] = useState([
     {
       id: 1,
       title: "Quadratic equation",
@@ -73,74 +28,6 @@ const ForumContentPage = () => {
           author: "Scott Maxwell (STAFF)",
           body: "You can use the quadratic formula: x = (-b ± √(b² − 4ac)) / 2a",
           replies: [
-            {
-              id: 3,
-              author: "Anonymous",
-              body: "Thanks! But what if the discriminant is negative?",
-              replies: [
-                {
-                  id: 5,
-                  author: "Scott Maxwell (STAFF)",
-                  body: "Great question! If b² - 4ac < 0, you get complex solutions with imaginary numbers.",
-                },
-              ],
-            },
-            {
-              id: 4,
-              author: "Jane Doe",
-              body: "This is really helpful, thank you!",
-            },
-            {
-              id: 3,
-              author: "Anonymous",
-              body: "Thanks! But what if the discriminant is negative?",
-              replies: [
-                {
-                  id: 5,
-                  author: "Scott Maxwell (STAFF)",
-                  body: "Great question! If b² - 4ac < 0, you get complex solutions with imaginary numbers.",
-                },
-              ],
-            },
-            {
-              id: 4,
-              author: "Jane Doe",
-              body: "This is really helpful, thank you!",
-            },
-            {
-              id: 3,
-              author: "Anonymous",
-              body: "Thanks! But what if the discriminant is negative?",
-              replies: [
-                {
-                  id: 5,
-                  author: "Scott Maxwell (STAFF)",
-                  body: "Great question! If b² - 4ac < 0, you get complex solutions with imaginary numbers.",
-                },
-              ],
-            },
-            {
-              id: 4,
-              author: "Jane Doe",
-              body: "This is really helpful, thank you!",
-            },
-            {
-              id: 3,
-              author: "Anonymous",
-              body: "Thanks! But what if the discriminant is negative?",
-              replies: [
-                {
-                  id: 5,
-                  author: "Scott Maxwell (STAFF)",
-                  body: "Great question! If b² - 4ac < 0, you get complex solutions with imaginary numbers.",
-                },
-              ],
-            },
-            {
-              id: 4,
-              author: "Jane Doe",
-              body: "This is really helpful, thank you!",
-            },
             {
               id: 3,
               author: "Anonymous",
@@ -178,15 +65,23 @@ const ForumContentPage = () => {
     },
   ]);
 
-  const [activePost, setActivePost] = useState<Post>(posts[0]);
+  const [activePost, setActivePost] = useState(posts[0]);
   const [showMobileDetail, setShowMobileDetail] = useState(false);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-
   const [showSidebar, setShowSidebar] = useState(true);
   const [showThreadList, setShowThreadList] = useState(true);
-  const [threadListWidth, setThreadListWidth] = useState(384); // 96 * 4 = 384px (lg:w-96)
+  const [threadListWidth, setThreadListWidth] = useState(384);
   const [isResizing, setIsResizing] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [showMobileEditor, setShowMobileEditor] = useState(false);
+
+  const [role, setRole] = useState("");
+  const options = [
+    { value: "", label: "All Users" },
+    { value: "student", label: "Students" },
+    { value: "staff", label: "Staff" },
+  ];
 
   const handleMouseDown = () => {
     setIsResizing(true);
@@ -194,7 +89,7 @@ const ForumContentPage = () => {
 
   const handleMouseMove = (e: MouseEvent) => {
     if (isResizing) {
-      const newWidth = e.clientX - (showSidebar ? 256 : 0); // Subtract sidebar width if visible
+      const newWidth = e.clientX - (showSidebar ? 256 : 0);
       if (newWidth >= 280 && newWidth <= 600) {
         setThreadListWidth(newWidth);
       }
@@ -219,118 +114,146 @@ const ForumContentPage = () => {
     };
   }, [isResizing, showSidebar]);
 
-  const CommentThread = ({
-    comment,
-    depth = 0,
-  }: {
-    comment: Comment;
-    depth?: number;
-  }) => {
-    const isStaff = comment.author.includes("STAFF");
-    const borderColor = isStaff ? "border-green-500" : "border-slate-700";
+  const handleAddComment = (content: string) => {
+    const newComment = {
+      id: Date.now(),
+      author: "Anonymous",
+      body: content,
+      replies: [],
+    };
 
-    return (
-      <div className={depth > 0 ? "ml-6 mt-4 max-h-screen" : ""}>
-        <div className={`border-l-4 ${borderColor} pl-4 pb-4`}>
-          <p
-            className={`text-sm font-medium ${
-              isStaff ? "text-green-400" : "text-slate-200"
-            }`}
-          >
-            {comment.author}
-          </p>
-          <p className="text-slate-300 mt-1">{comment.body}</p>
-
-          {/* Reply button placeholder */}
-          <button className="text-xs text-slate-400 hover:text-blue-400 mt-2">
-            Reply
-          </button>
-        </div>
-
-        {/* Render nested replies */}
-        {comment.replies && comment.replies.length > 0 && (
-          <div className="space-y-0">
-            {comment.replies.map((reply) => (
-              <CommentThread key={reply.id} comment={reply} depth={depth + 1} />
-            ))}
-          </div>
-        )}
-      </div>
+    setPosts(
+      posts.map((post) =>
+        post.id === activePost.id
+          ? { ...post, comments: [...post.comments, newComment] }
+          : post
+      )
     );
+
+    setActivePost((prev) => ({
+      ...prev,
+      comments: [...prev.comments, newComment],
+    }));
+
+    setShowMobileEditor(false);
+  };
+
+  const handleAddReply = (commentId: number, content: string) => {
+    const addReplyToComment = (comments: CommentType[]): CommentType[] => {
+      return comments.map((comment) => {
+        if (comment.id === commentId) {
+          const newReply: CommentType = {
+            id: Date.now(),
+            author: "Anonymous",
+            body: content,
+            replies: [],
+          };
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply],
+          };
+        }
+        if (comment.replies) {
+          return {
+            ...comment,
+            replies: addReplyToComment(comment.replies),
+          };
+        }
+        return comment;
+      });
+    };
+
+    setPosts(
+      posts.map((post) =>
+        post.id === activePost.id
+          ? { ...post, comments: addReplyToComment(post.comments) }
+          : post
+      )
+    );
+
+    setActivePost((prev) => ({
+      ...prev,
+      comments: addReplyToComment(prev.comments),
+    }));
+
+    setReplyingTo(null);
   };
 
   return (
-    <main className="h-screen flex flex-col lg:flex-row bg-gradient-to-b from-slate-900/0 to-slate-900/200 text-slate-100">
-      {/* Left sidebar */}
+    <main className="flex flex-col h-screen lg:flex-row text-slate-100 relative">
       {showSidebar && (
-        <aside className="hidden lg:block w-64 border-r border-slate-800 p-4 space-y-6">
-          <button className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 transition rounded-lg py-2 text-sm font-medium">
-            <Plus size={16} /> New Thread
+        <aside className="hidden lg:flex flex-col w-72 border-r border-slate-800/50 p-6 space-y-8 backdrop-blur-xl bg-slate-900/30">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 backdrop-blur-sm border border-blue-500/30 rounded-full shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+            <MessageSquare className="w-4 h-4 text-blue-300" />
+            <span className="text-sm font-medium text-blue-300">
+              Systems Programming
+            </span>
+          </div>
+
+          <button className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 transition-all rounded-xl py-3 text-sm font-semibold shadow-[0_0_25px_rgba(59,130,246,0.3)] hover:shadow-[0_0_35px_rgba(59,130,246,0.5)]">
+            <Plus size={18} /> New Thread
           </button>
 
           <div>
-            <h4 className="text-md uppercase text-slate-400 mb-2">Filters</h4>
-            <Dropdown />
-            <div className="flex flex-col mt-3 gap-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Filter className="w-4 h-4 text-slate-400" />
+              <h4 className="text-sm uppercase font-semibold text-slate-400 tracking-wider">
+                Filters
+              </h4>
+            </div>
+            <Dropdown options={options} onChange={setRole} />
+            <div className="flex flex-col mt-4 gap-3">
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">
-                  From
+                <label className="text-xs font-medium text-slate-400 mb-2 block">
+                  From Date
                 </label>
                 <input
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="bg-slate-900 text-slate-100 border border-slate-700 rounded-md px-3 py-2 text-xs w-full"
+                  className="bg-slate-900/80 text-slate-100 border border-slate-700/50 rounded-lg px-4 py-2.5 text-sm w-full backdrop-blur-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                 />
               </div>
-
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">To</label>
+                <label className="text-xs font-medium text-slate-400 mb-2 block">
+                  To Date
+                </label>
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="bg-slate-900 text-slate-100 border border-slate-700 rounded-md px-3 py-2 text-xs w-full"
+                  className="bg-slate-900/80 text-slate-100 border border-slate-700/50 rounded-lg px-4 py-2.5 text-sm w-full backdrop-blur-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                 />
               </div>
             </div>
           </div>
-
-          <div>
-            <h4 className="text-md uppercase text-slate-400 mb-2">
-              Categories
-            </h4>
-            <ul className="space-y-1 scrollview overflow-y-auto h-screen text-sm">
-              <li className="text-slate-300">General</li>
-              <li className="text-green-400">Tutorials</li>
-              <li className="text-yellow-400">Assignments</li>
-            </ul>
-          </div>
         </aside>
       )}
 
-      {/* Middle column: thread list */}
       {showThreadList && (
         <>
           <section
             className={`${
               showMobileDetail ? "hidden" : "flex"
-            } md:flex border-r border-slate-800 flex-col w-full md:relative`}
+            } md:flex border-r border-slate-800/50 flex-col w-full md:relative backdrop-blur-xl bg-slate-900/20`}
             style={{
               width: window.innerWidth >= 768 ? `${threadListWidth}px` : "100%",
             }}
           >
-            <div className="p-4 border-b border-slate-800">
-              <div className="flex items-center gap-2 bg-slate-900 rounded-lg px-3 py-2">
-                <Search size={16} className="text-slate-400" />
+            <div className="p-4 sm:p-6 border-b border-slate-800/50">
+              <div className="flex items-center gap-2 sm:gap-3 bg-slate-900/80 backdrop-blur-sm rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-slate-700/50 focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                <Search
+                  size={16}
+                  className="text-slate-400 sm:w-[18px] sm:h-[18px]"
+                />
                 <input
-                  placeholder="Search"
-                  className="bg-transparent text-sm outline-none w-full"
+                  placeholder="Search threads..."
+                  className="bg-transparent text-sm outline-none w-full text-slate-200 placeholder:text-slate-500"
                 />
               </div>
             </div>
 
-            <div className="flex-1 bg-slate-900/10 scrollview overflow-y-auto">
+            <div className="flex-1 scrollview overflow-y-auto">
               {posts.map((post) => (
                 <button
                   key={post.id}
@@ -338,20 +261,25 @@ const ForumContentPage = () => {
                     setActivePost(post);
                     setShowMobileDetail(true);
                   }}
-                  className={`w-full text-left px-4 py-3 border-b border-slate-800 hover:bg-slate-900 transition ${
-                    activePost.id === post.id ? "bg-slate-900" : ""
+                  className={`w-full text-left px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-800/50 hover:bg-slate-800/30 transition-all group ${
+                    activePost.id === post.id
+                      ? "bg-slate-800/50 border-l-4 border-l-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.1)]"
+                      : ""
                   }`}
                 >
-                  <h4 className="text-sm font-medium">{post.title}</h4>
-                  <p className="text-xs text-slate-400">{post.category}</p>
+                  <h4 className="text-sm sm:text-base font-semibold mb-1.5 sm:mb-2 text-slate-100 group-hover:text-blue-300 transition-colors">
+                    {post.title}
+                  </h4>
+                  <p className="text-xs text-slate-400 font-medium">
+                    {post.category}
+                  </p>
                 </button>
               ))}
             </div>
           </section>
 
-          {/* Resize handle - only on desktop */}
           <div
-            className="hidden md:block w-1 bg-slate-800 hover:bg-blue-500 cursor-col-resize transition-colors relative group"
+            className="hidden md:block w-1 bg-slate-800/50 hover:bg-blue-500 cursor-col-resize transition-all relative group"
             onMouseDown={handleMouseDown}
           >
             <div className="absolute inset-y-0 -left-1 -right-1" />
@@ -359,68 +287,114 @@ const ForumContentPage = () => {
         </>
       )}
 
-      {/* Right column: active post */}
       <section
         className={`${
           showMobileDetail ? "flex" : "hidden"
-        } md:flex flex-1 flex-col scrollview overflow-y-auto p-4 md:p-8 lg:p-10 max-w-full lg:max-w-6xl mx-auto w-full`}
+        } md:flex flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 md:px-12 md:py-12 lg:px-16 lg:py-16 max-w-full lg:max-w-6xl mx-auto w-full overflow-y-auto scrollview`}
       >
-        {/* Mobile back button */}
         <button
           onClick={() => setShowMobileDetail(false)}
-          className="md:hidden mb-6 flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition"
+          className="md:hidden mb-6 flex items-center gap-2 bg-slate-800/80 backdrop-blur-sm hover:bg-slate-700/80 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border border-slate-700/50"
         >
           <ArrowLeft size={18} /> Back to Threads
         </button>
-        <div className="flex flex-col gap-2">
-          <div className="bg-slate-900/80 p-5 rounded-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-3xl font-semibold">{activePost.title}</h1>
-              {/* <div className="hidden lg:flex items-center gap-2">
-                <button
-                  onClick={() => setShowSidebar((v) => !v)}
-                  className="px-3 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700"
-                >
-                  Toggle Sidebar
-                </button>
-                <button
-                  onClick={() => setShowThreadList((v) => !v)}
-                  className="px-3 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700"
-                >
-                  Toggle Threads
-                </button>
-              </div> */}
-            </div>
 
-            <div className="flex items-center gap-4 text-sm text-slate-400 mb-6">
-              <span className="flex items-center gap-1">
-                <User size={14} /> {activePost.author}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock size={14} /> {activePost.created_at}
+        <div className="flex flex-col gap-6 sm:gap-8">
+          <div className="bg-slate-800/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-purple-500/10 backdrop-blur-sm border border-purple-500/30 rounded-full mb-4 sm:mb-6 shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+              <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-purple-300" />
+              <span className="text-[10px] sm:text-xs font-semibold text-purple-300 uppercase tracking-wider">
+                {activePost.category}
               </span>
             </div>
 
-            <p className="whitespace-pre-line text-slate-300 mb-10">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-slate-100 leading-tight">
+              {activePost.title}
+            </h1>
+
+            <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-400 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-slate-700/50 flex-wrap">
+              <span className="flex items-center gap-1.5 sm:gap-2 font-medium">
+                <User size={14} className="text-slate-500 sm:w-4 sm:h-4" />{" "}
+                {activePost.author}
+              </span>
+              <span className="flex items-center gap-1.5 sm:gap-2 font-medium">
+                <Clock size={14} className="text-slate-500 sm:w-4 sm:h-4" />{" "}
+                {activePost.created_at}
+              </span>
+            </div>
+
+            <p className="whitespace-pre-line text-slate-300 text-base sm:text-lg leading-relaxed">
               {activePost.content}
             </p>
           </div>
 
-          <div className="bg-slate-900/80 p-5 rounded-xl">
-            <h3 className="text-lg font-semibold mb-4">Answers</h3>
+          <div className="bg-slate-800/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl">
+            <h3 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-slate-100">
+              Answers
+            </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-4 sm:space-y-6 mb-8 sm:mb-10">
               {activePost.comments.length === 0 && (
-                <p className="text-slate-400 italic">No answers yet.</p>
+                <p className="text-slate-400 italic text-base sm:text-lg">
+                  No answers yet. Be the first to help!
+                </p>
               )}
 
               {activePost.comments.map((comment) => (
-                <CommentThread key={comment.id} comment={comment} />
+                <CommentThread
+                  handleAddReply={handleAddReply}
+                  setReplyingTo={setReplyingTo}
+                  replyingTo={replyingTo}
+                  key={comment.id}
+                  comment={comment}
+                />
               ))}
+            </div>
+
+            <div className="hidden sm:block border-t border-slate-700/50 pt-6 sm:pt-8">
+              <h4 className="text-lg sm:text-xl font-semibold text-slate-200 mb-4 sm:mb-5">
+                Share Your Knowledge
+              </h4>
+              <RichTextEditor
+                onSubmit={handleAddComment}
+                placeholder="Write a detailed answer to help others..."
+              />
+            </div>
+
+            <div className="sm:hidden border-t border-slate-700/50 pt-6">
+              <button
+                onClick={() => setShowMobileEditor(true)}
+                className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 transition-all rounded-xl py-3.5 text-sm font-semibold shadow-[0_0_25px_rgba(59,130,246,0.3)]"
+              >
+                <MessageSquare size={18} /> Write an Answer
+              </button>
             </div>
           </div>
         </div>
       </section>
+
+      {showMobileEditor && (
+        <div className="sm:hidden fixed inset-0 z-50 flex flex-col bg-slate-950/95 backdrop-blur-xl">
+          <div className="flex items-center justify-between p-4 border-b border-slate-800/50">
+            <h3 className="text-lg font-semibold text-slate-100">
+              Write Your Answer
+            </h3>
+            <button
+              onClick={() => setShowMobileEditor(false)}
+              className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors"
+            >
+              <X size={20} className="text-slate-400" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4">
+            <RichTextEditor
+              onSubmit={handleAddComment}
+              onCancel={() => setShowMobileEditor(false)}
+              placeholder="Write a detailed answer to help others..."
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 };

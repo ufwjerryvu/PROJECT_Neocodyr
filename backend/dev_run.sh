@@ -14,4 +14,4 @@ else
     docker build -t "$IMAGE_NAME" .
 fi
 
-docker run --env-file .env -p 5432:5432 $IMAGE_NAME && python3 manage.py runserver
+docker run -d --env-file .env -p 5432:5432 $IMAGE_NAME && python3 manage.py runserver
