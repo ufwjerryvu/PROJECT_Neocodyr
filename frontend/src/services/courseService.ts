@@ -22,5 +22,10 @@ export const courseService = {
 
         return response.data;
     },
+    
+    getCourse: async (id: number) => {
+        const response = await api.get(`/courses/${id}/`);
 
+        return response.data;
+    }
 }

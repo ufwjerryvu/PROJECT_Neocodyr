@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import { BookOpen, Plus, X } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { courseService } from "../../../services/courseService";
-import AlertModal from "../../../components/AlertModal";
-import StatusBox from "../../../components/StatusBox";
+import { courseService } from "../../../../services/courseService";
+import AlertModal from "../../../../components/AlertModal";
+import StatusBox from "../../../../components/StatusBox";
 import { useNavigate } from "react-router-dom";
 
 const AuthorCreateCoursePageContent = () => {
@@ -38,7 +38,7 @@ const AuthorCreateCoursePageContent = () => {
     const handleSubmitPress = async () => {
         try{
             const response = await courseService.createCourse(courseInfo);
-            navigate(`/author/courses/${response.id}/lessons/create`, {
+            navigate(`/author/courses/${response.id}/manage`, {
                 replace: true,
                 state: { courseTitle: courseInfo.title }
             });

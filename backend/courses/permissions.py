@@ -1,6 +1,6 @@
 from rest_framework import permissions 
 
-class IsAuthor(permissions.BasePermission):
+class IsAnAuthor(permissions.BasePermission):
     """
     Checks if the user is an assigned author.
     """
