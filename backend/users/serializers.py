@@ -131,13 +131,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         ]
     )
 
-    email = serializers.EmailField(
-        allow_blank=False,
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-
     def validate(self, attrs):
         validate_update_cooldown(self.instance)
         return attrs
