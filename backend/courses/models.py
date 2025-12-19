@@ -45,6 +45,18 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    @classmethod
+    def get_next_order(cls, course):
+        """
+        Gets the maximum order in the database and returns the next index. Use-
+        ful when creating a lesson and the order matters. 
+        """
+        max_order = cls.objects.filter(course=course).aggregate(
+            models.Max("order")
+        )["order__max"]
+
+        return (max_order or 0) + 1
 
     class Meta:
         db_table = "Lessons"

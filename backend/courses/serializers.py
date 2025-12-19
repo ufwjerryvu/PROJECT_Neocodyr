@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course
+from .models import Course, Lesson
 from users.models import User
 
 class AuthorMinimalReadSerializer(serializers.ModelSerializer):
@@ -41,3 +41,17 @@ class CourseSettingsUpdateSerializer(serializers.ModelSerializer):
         model = Course
         fields = ["title", "description", "thumbnail", "is_public"]
 
+class LessonSerializer(serializers.ModelSerializer):
+    """
+    Allows the author to create a lesson. Automatically manages lesson order 
+    during the creation process.
+    """
+    
+    def create(self, validated_data):
+        validated_data["order"] = Lesson.get_next_order(validated_data["course"])
+        return super().create(validated_data)
+    
+    class meta:
+        model = Lesson
+        fields = ["id", "title", "course", "order", "created_at"]
+        read_only_fields = ["id", "order", "created_at"]
