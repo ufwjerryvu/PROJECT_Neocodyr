@@ -181,3 +181,14 @@ class LessonDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Lesson.DoesNotExist:
             raise NotFound()
+        
+    def get(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+
+            serializer = LessonSerializer(lesson)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Lesson.DoesNotExist:
+            raise NotFound()
+    

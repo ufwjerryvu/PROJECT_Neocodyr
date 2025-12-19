@@ -51,7 +51,7 @@ class LessonSerializer(serializers.ModelSerializer):
         validated_data["order"] = Lesson.get_next_order(validated_data["course"])
         return super().create(validated_data)
     
-    class meta:
+    class Meta:
         model = Lesson
         fields = ["id", "title", "course", "order", "created_at"]
-        read_only_fields = ["id", "order", "created_at"]
+        read_only_fields = ["id", "course", "order", "created_at"]
