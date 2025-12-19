@@ -4,9 +4,11 @@ import ForumPageContent from "./Content";
 
 export const ForumPage = () => {
   return (
-    <Background>
-      <Navbar variant={"landing"} />
-      <ForumPageContent />
-    </Background>
+    <div className="max-h-screen overflow-hidden">
+      <Background>
+        <Navbar variant={"landing"} />
+        <ForumPageContent />
+      </Background>
+    </div>
   );
 };

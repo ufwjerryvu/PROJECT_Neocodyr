@@ -106,7 +106,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onInput={updateFormats}
         onKeyUp={updateFormats}
         onMouseUp={updateFormats}
-        className="min-h-[120px] p-4 text-slate-200 focus:outline-none prose prose-invert prose-sm max-w-none"
+        className="min-h-[120px] max-h-[25vh] scrollview overflow-y-auto p-4 text-slate-200 focus:outline-none prose prose-invert prose-sm max-w-none"
         style={{
           wordWrap: "break-word",
           overflowWrap: "break-word",
