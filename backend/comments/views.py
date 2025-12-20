@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import Http404
+from django.db.models import F
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -8,9 +9,9 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from .models import Comments, CommentHierarchyTable
 from .serializers import (
-    CreateCommentSerializer,
+    ReplyPostSerializer,
     CommentSerializer,
-    CreateCommentHierarchySerializer,
+    ReplyCommentSerializer,
     CommentUpdateSerializer
 )
 
@@ -26,18 +27,43 @@ class CommentGetView(APIView):
     """API view for retrieving paginated comments for a post."""
 
     def get(self, request, post_id):
-        comments = (
-            Comments.objects.filter(post_id=post_id).order_by('created_at')
+        page_result = []
+        curr_depth = 0
+        
+        hierarchy = CommentHierarchyTable.objects.filter(
+            original_comment__post_id=post_id
         )
+        
+        root_comments_qs = hierarchy.filter(depth=curr_depth)
+        
         paginator = CommentPagination()
-        page = paginator.paginate_queryset(comments, request, view=self)
-        serializer = CommentSerializer(page, many=True)
+        comment_page = paginator.paginate_queryset(root_comments_qs, request, view=self)
+        
+        for root_comment in comment_page:
+            comment = root_comment.values(
+                comment_id=F("original_comment__id"), 
+                post_id=F("original_comment__post_id"), 
+                content=F("original_comment__content"), 
+                author=F("original_comment__author__username"), 
+                likes=F("original_comment__likes"), 
+                reply_time=F("original_comment__reply_time")
+            )
+            
+            comment['replies'] = list(hierarchy.filter(depth=curr_depth + 1).filter(
+                original_comment=comment.id
+            ).value(comment_id=F("descendant_comment__id"), 
+                    post_id=F("descendant_comment__post_id"), 
+                    content=F("descendant_comment__content"), 
+                    author=F("descendant_comment__author__username"), 
+                    likes=F("descendant_comment__likes"), 
+                    reply_time=F("descendant_comment__reply_time")))
+        
+            page_result.append(comment)
 
         return Response(
-            paginator.get_paginated_response(serializer.data),
+            paginator.get_paginated_response(page_result),
             status=status.HTTP_200_OK
         )
-
 
 class CommentUpdateView(APIView):
     """API view for updating existing comments."""
@@ -65,16 +91,15 @@ class CommentUpdateView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
 class ReplyCommentView(APIView):
     """API view for replying to a comment (adds to closure table)."""
 
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        comment_hierarchy = request.data
+        new_reply = request.data
 
-        serializer = CreateCommentHierarchySerializer(comment_hierarchy)
+        serializer = ReplyCommentSerializer(new_reply)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -83,7 +108,6 @@ class ReplyCommentView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
 class ReplyPostView(APIView):
     """API view for replying to a post with a new comment."""
 
@@ -91,16 +115,9 @@ class ReplyPostView(APIView):
 
     def post(self, request):
         comment = request.data
-        serializer = CreateCommentSerializer(comment)
+        serializer = ReplyPostSerializer(comment)
         if serializer.is_valid():
-            new_comment = serializer.save()
-            hierarchy_data = {
-                "original_comment": new_comment.id,
-                "descendant_comment": new_comment.id,
-                "depth": 0
-            }
-            hierarchy = CommentHierarchyTable(hierarchy_data)
-            hierarchy.save()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             serializer.errors,
