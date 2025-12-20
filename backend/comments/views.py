@@ -70,7 +70,7 @@ class ReplyCommentView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request):
+    def post(self, request):
         comment_hierarchy = request.data
 
         serializer = CreateCommentHierarchySerializer(comment_hierarchy)
@@ -85,10 +85,10 @@ class ReplyCommentView(APIView):
 
 class ReplyPostView(APIView):
     """API view for replying to a post with a new comment."""
-
+    
     permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request):
+    def post(self, request):
         comment = request.data
         serializer = CommentSerializer(comment)
         if serializer.is_valid():
