@@ -12,7 +12,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comments
         fields = [
             'post_id', 'author_id', 'likes', 'content',
-            'reply_time', 'updated_at'
+            'reply_time'
         ]
 
 
@@ -78,7 +78,7 @@ class PayloadReplySerializer(serializers.Serializer):
 
         new_comment_instance = comment_serializer.save()
         comment_hierarchy["descendant_comment"] = new_comment_instance.id
-
+        
         comment_hierarchy_serializer = (
             CommentHierarchySerializer(**comment_hierarchy)
         )
