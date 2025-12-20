@@ -8,6 +8,7 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from .models import Comments, CommentHierarchyTable
 from .serializers import (
+    CreateCommentSerializer,
     CommentSerializer,
     CreateCommentHierarchySerializer,
     CommentUpdateSerializer
@@ -85,14 +86,21 @@ class ReplyCommentView(APIView):
 
 class ReplyPostView(APIView):
     """API view for replying to a post with a new comment."""
-    
+
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         comment = request.data
-        serializer = CommentSerializer(comment)
+        serializer = CreateCommentSerializer(comment)
         if serializer.is_valid():
-            serializer.save()
+            new_comment = serializer.save()
+            hierarchy_data = {
+                "original_comment": new_comment.id,
+                "descendant_comment": new_comment.id,
+                "depth": 0
+            }
+            hierarchy = CommentHierarchyTable(hierarchy_data)
+            hierarchy.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             serializer.errors,
