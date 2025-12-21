@@ -4,6 +4,21 @@ from .models import Comments, CommentHierarchyTable
 from posting.models import Posts
 from users.models import User
 
+class GetMoreCommentsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for retrieving more comments.
+    """
+    comment_id = serializers.PrimaryKeyRelatedField(
+        source='comment', queryset=Comments.objects.all()
+    )
+    
+    post_id = serializers.PrimaryKeyRelatedField(
+        source='post', queryset=Posts.objects.all()
+    )
+    
+    depth = serializers.IntegerField()
+    
+    
 class CommentUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer for updating comment content.
@@ -25,8 +40,6 @@ class ReplyPostSerializer(serializers.ModelSerializer):
     """
     Serializer for creating new comments.
     """
-
-    reply_time = serializers.DateTimeField(format="%d/%m/%Y %H:%M")
 
     class Meta:
         model = Comments
