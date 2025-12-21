@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Posts
 from datetime import datetime
 
-
 class PostsSerializer(serializers.ModelSerializer):
     """
     Serializer for reading and updating posts.
@@ -21,10 +20,31 @@ class PostsSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class CreatePostsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for reading and updating posts.
+    """
+    class Meta:
+        model = Posts
+        fields = [
+            "id", "title", "content", "likes", "created_at",
+            "updated_at", "author_id"
+        ]
+    
+    def create(self, validated_data):
+        post = Posts.objects.create(
+            title=validated_data.get("title"),
+            content=validated_data.get("content"),
+            likes=validated_data.get("likes", 0),
+            course_id=validated_data.get("course_id"),
+            author_id=validated_data.get("author_id"),
+            created_at=f"{datetime.now().strftime('%d/%m/%y %H:%M')}"
+        )
+        return post
 
 class PostUpdateSerializer(serializers.ModelSerializer):
     """
-    Serializer for post update operations.
+    Payload serializer for post update operations.
     """
 
     class Meta:
@@ -34,7 +54,7 @@ class PostUpdateSerializer(serializers.ModelSerializer):
 
 class BatchReadPostsSerializer(serializers.ModelSerializer):
     """
-    Serializer for batch reading posts.
+    Payload serializer for batch reading posts.
     """
 
     class Meta:

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework import permissions
 
 from courses.models import Course
 from .models import Posts
-from .serializers import PostsSerializer, PostUpdateSerializer
+from .serializers import PostsSerializer, CreatePostsSerializer, PostUpdateSerializer
 
 
 class PostPagination(LimitOffsetPagination):
@@ -28,7 +29,7 @@ class CreatePostView(APIView):
 
     def post(self, request):
         post = request.data
-        serializer = PostsSerializer(data=post)
+        serializer = CreatePostsSerializer(data=post)
 
         if serializer.is_valid():
             serializer.save()
@@ -51,7 +52,7 @@ class UpdatePostsView(APIView):
 
     def patch(self, request, post_id):
         new_content = request.data
-        new_content_serializer = PostUpdateSerializer(new_content)
+        new_content_serializer = PostUpdateSerializer(data=new_content)
 
         if new_content_serializer.is_valid():
             author_id = new_content_serializer.data.get("author_id", -1)
@@ -62,43 +63,16 @@ class UpdatePostsView(APIView):
                     status=status.HTTP_403_FORBIDDEN
                 )
             
-            if len(post_id) >= 0:
-                return Response(
-                    new_content_serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
             post = Posts.object.filter(id=post_id)
-            updated_post = PostsSerializer(post, new_content_serializer.data)
-            return Response(updated_post.data, status=status.HTTP_200_OK)
-        
+            
+            if len(post) >= 0: # If there is a post
+                updated_post = PostsSerializer(post, data=new_content_serializer.data, partial=True)
+                return Response(updated_post.data, status=status.HTTP_200_OK)
+            
         return Response(
-            new_content_serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+            {"error": "Post not found"},
+            status=status.HTTP_404_NOT_FOUND
         )
-
-
-class GetPostsView(APIView):
-    """API view for retrieving a single post."""
-
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, post_id):
-        post = Posts.objects.filter(id=post_id)
-        serializer = PostsSerializer(post)
-
-        if serializer.s_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK
-            )
-        
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
 
 class BatchPostsView(APIView):
     """API view for retrieving all posts in a course."""
@@ -108,18 +82,17 @@ class BatchPostsView(APIView):
     def get(self, request, course_id):
         # Check if they can view the posts
         user_id = request.user.id
-        students = Course.objects.filter(
+        
+        user_in_course = Course.objects.filter(
             id=course_id
-        ).filter(student=user_id)
-        instructor = Course.objects.filter(
-            id=course_id
-        ).filter(instructor=user_id)
+        ).filter(Q(student=user_id) | Q(instructor=user_id))
 
-        if len(students) <= 0 and len(instructor) <= 0:
+        if len(user_in_course) == 0:
             return Response(
                 {"error": "You don't have permission to see these post"},
                 status=status.HTTP_403_FORBIDDEN
             )
+            
         posts = Posts.objects.filter(course_id=course_id)
         paginator = PostPagination()
         page = paginator.paginate_queryset(posts, request, view=self)
