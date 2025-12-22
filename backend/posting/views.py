@@ -63,7 +63,7 @@ class UpdatePostsView(APIView):
             post = Posts.object.filter(id=post_id)
             
             if len(post) >= 0: # If there is a post
-                updated_post = PostsSerializer(post, data=new_content_serializer.data, partial=True)
+                updated_post = PostSerializer(post, data=new_content_serializer.data, partial=True)
                 return Response(updated_post.data, status=status.HTTP_200_OK)
             
         raise NotFound("Post not found")
