@@ -5,10 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from rest_framework.exceptions import PermissionDenied, NotFound
 
 from courses.models import Course
 from .models import Posts
-from .serializers import PostsSerializer, CreatePostsSerializer, PostUpdateSerializer
+from .serializers import PostSerializer, PostUpdateSerializer, BatchReadPostsSerializer
 
 
 class PostPagination(LimitOffsetPagination):
@@ -19,7 +20,6 @@ class PostPagination(LimitOffsetPagination):
     default_limit = 20
     max_limit = 100
 
-
 class CreatePostView(APIView):
     """
     API view for creating a new post.
@@ -29,11 +29,11 @@ class CreatePostView(APIView):
 
     def post(self, request):
         post = request.data
-        serializer = CreatePostsSerializer(data=post)
+        serializer = PostSerializer(data=post)
 
         if serializer.is_valid():
             serializer.save()
-
+            
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
@@ -44,7 +44,6 @@ class CreatePostView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
 class UpdatePostsView(APIView):
     """API view for updating existing posts."""
 
@@ -52,16 +51,14 @@ class UpdatePostsView(APIView):
 
     def patch(self, request, post_id):
         new_content = request.data
-        new_content_serializer = PostUpdateSerializer(data=new_content)
+        old_post = Posts.objects.filter(id=post_id)
+        new_content_serializer = PostUpdateSerializer(old_post, data=new_content, partial=True)
 
         if new_content_serializer.is_valid():
             author_id = new_content_serializer.data.get("author_id", -1)
 
             if author_id < 0 or author_id != request.user.id:
-                return Response(
-                    {"error": "You don't have permission to edit this post"},
-                    status=status.HTTP_403_FORBIDDEN
-                )
+                raise PermissionDenied("You don't have permission to edit this post")
             
             post = Posts.object.filter(id=post_id)
             
@@ -69,10 +66,7 @@ class UpdatePostsView(APIView):
                 updated_post = PostsSerializer(post, data=new_content_serializer.data, partial=True)
                 return Response(updated_post.data, status=status.HTTP_200_OK)
             
-        return Response(
-            {"error": "Post not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        raise NotFound("Post not found")
 
 class BatchPostsView(APIView):
     """API view for retrieving all posts in a course."""
@@ -88,15 +82,13 @@ class BatchPostsView(APIView):
         ).filter(Q(student=user_id) | Q(instructor=user_id))
 
         if len(user_in_course) == 0:
-            return Response(
-                {"error": "You don't have permission to see these post"},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            raise PermissionDenied("You don't have permission to edit this post")
             
-        posts = Posts.objects.filter(course_id=course_id)
+        posts = Posts.objects.filter(course_id=course_id).order_by('-created_at')
         paginator = PostPagination()
         page = paginator.paginate_queryset(posts, request, view=self)
-        serializer = PostsSerializer(page, many=True)
+        serializer = BatchReadPostsSerializer(page)
+        
         return Response(
             paginator.get_paginated_response(serializer.data),
             status=status.HTTP_200_OK
