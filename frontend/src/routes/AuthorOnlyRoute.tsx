@@ -6,9 +6,9 @@ export const AuthorOnlyRoute = () => {
     const [user, setUser, loading] = useAuth();
 
     if (loading) return <div>Loading...</div>
-    if (!user) return <Navigate to="/login"/>
+    if (!user) return <Navigate to="/error/unauthorized" replace/>
 
     return (
-        user.role.toLowerCase() === "author" ? <Outlet/> : <Navigate to="dashboard"/>
+        user.role.toLowerCase() === "author" ? <Outlet/> : <Navigate to="/error/forbidden" replace/>
     )
 }

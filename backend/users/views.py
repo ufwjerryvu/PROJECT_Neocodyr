@@ -22,7 +22,6 @@ class UserRegisterView(APIView):
     serializer_class = UserCreateSerializer
 
     # NOTE: serializer class attribute is needed for browsable DRF APIs
-    
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():

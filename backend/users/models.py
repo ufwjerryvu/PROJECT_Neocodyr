@@ -5,7 +5,7 @@ def user_avatar_path(instance, filename):
     """
     Defines avatar (profile picture) path for users based on their ID.
     """
-    return f"users/avatars/{instance.id}/{filename}"
+    return f"users/{instance.id}/avatar/{filename}"
 
 class User(AbstractUser):
     """

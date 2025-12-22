@@ -1,6 +1,12 @@
 from django.db import models
 from users.models import User
 
+def course_thumbnail_path(instance, filename):
+    """
+    Defines the thumbnail path for a course. 
+    """
+    return f"courses/{instance.id}/thumbnail/{filename}"
+
 class Course(models.Model):
     """
     The model for a course. Each course can have as little as zero 
@@ -10,9 +16,12 @@ class Course(models.Model):
     """
 
     title = models.CharField(max_length=256, null=False)
-    description = models.TextField(null=False, max_length=128)
+    description = models.TextField(null=False, max_length=1024)
     created_at = models.DateTimeField(auto_now_add=True)
-    thumbnail = models.ImageField(null=True, blank=True)
+    thumbnail = models.ImageField(
+        upload_to=course_thumbnail_path,
+        null=True, 
+        blank=True)
 
     # Author is automatically an instructor. Checks needed. 
     author = models.ForeignKey(User, null=False, on_delete=models.CASCADE,

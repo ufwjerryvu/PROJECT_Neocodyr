@@ -9,7 +9,7 @@ class AuthorMinimalReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "name", "image"]
+        fields = ["id", "username", "first_name", "last_name", "image"]
 
 class CourseCreateSerializer(serializers.ModelSerializer):
     """
@@ -31,4 +31,13 @@ class CourseOverviewReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ["title", "description", "is_public", "author"]
+        fields = ["id", "title", "description", "thumbnail", "is_public", "author"]
+
+class CourseSettingsUpdateSerializer(serializers.ModelSerializer):
+    """
+    Lets the author change course information.
+    """
+    class Meta:
+        model = Course
+        fields = ["title", "description", "thumbnail", "is_public"]
+
