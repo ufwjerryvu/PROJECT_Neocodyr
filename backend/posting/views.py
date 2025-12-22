@@ -76,13 +76,13 @@ class BatchPostsView(APIView):
     def get(self, request, course_id):
         # Check if they can view the posts
         user_id = request.user.id
-        
+        print(f"User ID: {user_id}, Course ID: {course_id}")
         user_in_course = Course.objects.filter(
             id=course_id
-        ).filter(Q(student=user_id) | Q(instructor=user_id))
-
+        ).filter(Q(students=user_id) | Q(instructors=user_id))
+        
         if len(user_in_course) == 0:
-            raise PermissionDenied("You don't have permission to edit this post")
+            raise PermissionDenied("You don't have permission to see this post")
             
         posts = Posts.objects.filter(course_id=course_id).order_by('-created_at')
         paginator = PostPagination()
