@@ -35,5 +35,20 @@ export const courseService = {
     deleteThumbnail: async (id: number) => {
         const response = await api.delete(`/courses/${id}/thumbnail/`);
         return response.data;
-    }
+    },
+
+    createLesson: async (id: number, formData: FormData) => {
+        const response = await api.post(`/courses/${id}/lessons/`, formData);
+        return response.data;
+    },
+
+    getCourseLessons: async (id: number) => {
+        const response = await api.get(`/courses/${id}/lessons/`);
+        return response.data;
+    },
+
+    updateLesson: async (lessonId: number, data: { title: string }) => {
+    const response = await api.patch(`/courses/lessons/${lessonId}/`, data);
+    return response.data;
+}
 }
