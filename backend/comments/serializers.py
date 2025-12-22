@@ -1,94 +1,24 @@
 from rest_framework import serializers
 from datetime import datetime
 from .models import Comments, CommentHierarchyTable
+from posting.models import Posts
+from users.models import User
 
-
-class CommentSerializer(serializers.ModelSerializer):
+class GetMoreCommentsSerializer(serializers.ModelSerializer):
     """
-    Serializer for reading comment data.
+    Serializer for retrieving more comments.
     """
-
-    class Meta:
-        model = Comments
-        fields = [
-            'post_id', 'author_id', 'likes', 'content',
-            'reply_time', 'updated_at'
-        ]
-
-
-class CreateCommentSerializer(serializers.ModelSerializer):
-    """
-    Serializer for creating new comments.
-    """
-
-    reply_time = serializers.DateTimeField(format="%d/%m/%Y %H:%M")
-
-    class Meta:
-        model = Comments
-        fields = ['post_id', 'author_id', 'content']
-
-    def create(self, validated_data):
-        new_comment = Comments(**validated_data)
-        new_comment.reply_time = datetime.now().strftime("%d/%m/%Y %H:%M")
-        new_comment.save()
-        return new_comment
-
-
-class CreateCommentHierarchySerializer(serializers.ModelSerializer):
-    """
-    Serializer for creating comment hierarchy entries.
-    """
-
-    class Meta:
-        model = CommentHierarchyTable
-        fields = ['original_comment', 'depth']
-
-
-class CommentHierarchySerializer(serializers.ModelSerializer):
-    """
-    Serializer for managing comment hierarchy relationships.
-    """
-
-    class Meta:
-        model = CommentHierarchyTable
-        fields = ['original_comment', 'descendant_comment', 'depth']
-
-    def create(self, validated_data):
-        new_hierarchy = CommentHierarchyTable(**validated_data)
-        new_hierarchy.save()
-        return new_hierarchy
-
-
-class PayloadReplySerializer(serializers.Serializer):
-    """
-    Serializer for handling comment reply payloads.
-    """
-
-    new_comment = CreateCommentSerializer()
-    hierarchy_item = CreateCommentHierarchySerializer()
-
-    def create(self, validated_data):
-        # Extract nested data
-        new_comment = validated_data.pop('new_comment')
-        comment_hierarchy = validated_data.pop('metadata')
-
-        comment_serializer = CreateCommentSerializer(new_comment)
-        if not comment_serializer.is_valid():
-            return None
-
-        new_comment_instance = comment_serializer.save()
-        comment_hierarchy["descendant_comment"] = new_comment_instance.id
-
-        comment_hierarchy_serializer = (
-            CommentHierarchySerializer(**comment_hierarchy)
-        )
-        if not comment_hierarchy_serializer.is_valid():
-            return None
-
-        new_hierarchy_instance = comment_hierarchy_serializer.save()
-        return [new_comment_instance, new_hierarchy_instance]
-
-
+    comment_id = serializers.PrimaryKeyRelatedField(
+        source='comment', queryset=Comments.objects.all()
+    )
+    
+    post_id = serializers.PrimaryKeyRelatedField(
+        source='post', queryset=Posts.objects.all()
+    )
+    
+    depth = serializers.IntegerField()
+    
+    
 class CommentUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer for updating comment content.
@@ -105,3 +35,59 @@ class CommentUpdateSerializer(serializers.ModelSerializer):
         )
         instance.save()
         return instance
+
+class ReplyPostSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating new comments.
+    """
+
+    class Meta:
+        model = Comments
+        fields = ['post_id', 'author_id', 'content']
+
+    def create(self, validated_data):
+        new_comment = Comments(**validated_data)
+        new_comment.reply_time = datetime.now().strftime("%d/%m/%Y %H:%M")
+        new_comment.save()
+        
+        hierarchy_data = {
+            "original_comment": new_comment.id,
+            "descendant_comment": new_comment.id,
+            "depth": 0
+        }
+        hierarchy = CommentHierarchyTable(hierarchy_data)
+        hierarchy.save()
+        
+        return new_comment
+
+class ReplyCommentSerializer(serializers.ModelSerializer):
+    post_id = serializers.PrimaryKeyRelatedField(
+        source='post', queryset=Posts.objects.all()
+    )
+    
+    comment_id = serializers.PrimaryKeyRelatedField(
+        source='comment', queryset=Comments.objects.all()
+    )
+    
+    author_id = serializers.PrimaryKeyRelatedField(
+        source='author', queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = Comments
+        fields = ['content', 'post_id', 'comment_id', 'author_id']  
+    
+    def create(self, validated_data):
+        
+        new_reply = Comments.objects.create(**validated_data)
+        new_reply.reply_time = datetime.now().strftime("%d/%m/%Y %H:%M")
+        new_reply.save()
+        
+        hierarchy_data = {
+            "original_comment": validated_data.get('comment_id'),
+            "descendant_comment": new_reply.id,
+            "depth": 0
+        }
+        hierarchy = CommentHierarchyTable(hierarchy_data)
+        hierarchy.save()
+        return new_reply
