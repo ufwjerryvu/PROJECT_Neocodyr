@@ -53,5 +53,18 @@ class LessonSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Lesson
-        fields = ["id", "title", "course", "order", "created_at"]
-        read_only_fields = ["id", "course", "order", "created_at"]
+        fields = ["id", "title", "course", "order", "created_at", "updated_at"]
+        read_only_fields = ["id", "course", "order", "created_at", "updated_at"]
+
+class CourseLessonsSerializer(serializers.ModelSerializer):
+    """
+    Read-only serializer for retrieving lesson data within a course.
+    Used for listing lessons and displaying basic lesson information.
+    """
+
+    class Meta:
+        model = Lesson
+        fields = ["id", "title", "course", "order", "created_at", 
+                  "updated_at"]
+        read_only_fields = ["id", "title", "course", "order", 
+                            "created_at", "updated_at"]

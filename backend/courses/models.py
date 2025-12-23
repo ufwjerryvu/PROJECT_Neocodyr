@@ -18,6 +18,7 @@ class Course(models.Model):
     title = models.CharField(max_length=256, null=False)
     description = models.TextField(null=False, max_length=1024)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     thumbnail = models.ImageField(
         upload_to=course_thumbnail_path,
         null=True, 
@@ -45,6 +46,7 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     @classmethod
     def get_next_order(cls, course):
