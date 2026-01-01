@@ -1,5 +1,23 @@
 from django.db import models
 from courses.models import Lesson
+from django.contrib.contenttypes.fields import GenericForeignKey
+
+class LessonItem(models.Model):
+    """
+    Abstract ordering mechanism for lesson content to avoid race conditions
+    by only using computational methods. Ensures unique ordering across all
+    content types within a lesson.
+    """
+
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    order = models.IntegerField(null=False)
+    content_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    class Meta:
+        unique_together = [["lesson", "order"]]
+        ordering = ["order"]
 
 class Lecture(models.Model):
     """
@@ -10,7 +28,6 @@ class Lecture(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     title = models.CharField(max_length=256, null=False, blank=False)
     content = models.TextField(null=False, blank=False)
-    order = models.IntegerField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -18,7 +35,6 @@ class Lecture(models.Model):
         db_table = "Lectures"
         verbose_name = "Lecture"
         verbose_name_plural = "Lectures"
-        unique_together = [["lesson", "order"]]
 
 class Problem(models.Model):
     """
@@ -34,7 +50,6 @@ class Problem(models.Model):
     test_script = models.TextField()
     reward = models.IntegerField(default=0)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    order = models.IntegerField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -42,4 +57,3 @@ class Problem(models.Model):
         db_table = "Problems"
         verbose_name = "Problem"
         verbose_name_plural = "Problems"
-        unique_together = [["lesson", "order"]]
