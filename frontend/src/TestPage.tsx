@@ -3,17 +3,14 @@ import { BookOpen, Plus, Edit2, Trash2, UserPlus, Users, GraduationCap, Mail, Se
 import Navbar from './components/Navbar';
 import Background from './components/Background';
 import Footer from './components/Footer';
-import CreateLessonModal from './pages/Course/Author/Manage/components/CreateLessonModal';
+import CreateLessonModal from './pages/Course/Authors/Manage/components/CreateLessonModal';
+import LessonAuthorManagePage from './pages/Lesson/Authors/Page';
 
 export const TestPage = () => {
     const [open, setOpen] = useState(true);
     return (
         <>
-            <Background>
-                <Navbar variant="login"/>
-                
-                <Footer/>
-            </Background>
+            <LessonAuthorManagePage/>
         </>
     );
 };
