@@ -1,6 +1,10 @@
 from django.db import models
 from courses.models import Lesson
 from django.contrib.contenttypes.fields import GenericForeignKey
+from .constants import (
+    MAX_TIME_LIMIT_MS,
+    MAX_MEM_LIMIT_MB
+)
 
 class LessonItem(models.Model):
     """
@@ -59,7 +63,7 @@ class Problem(models.Model):
     starter_code = models.TextField(null=True, blank=True)
     time_limit_ms = models.BigIntegerField(default=10000) # 10 seconds
     memory_limit_mb = models.BigIntegerField(default=64) # 64 megabytes
-    test_script = models.TextField()
+    test_script = models.TextField(blank=False)
     reward = models.IntegerField(default=0)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -69,3 +73,16 @@ class Problem(models.Model):
         db_table = "Problems"
         verbose_name = "Problem"
         verbose_name_plural = "Problems"
+
+    def save(self, *args, **kwargs):
+        """
+        If user sets values to zero, set to max limit to avoid unwanted
+        crashes from resource constraints. 
+        """
+
+        if self.memory_limit_mb == 0:
+            self.memory_limit_mb = MAX_MEM_LIMIT_MB
+        if self.time_limit_ms == 0:
+            self.time_limit_ms = MAX_TIME_LIMIT_MS
+        
+        super().save(*args, **kwargs)
