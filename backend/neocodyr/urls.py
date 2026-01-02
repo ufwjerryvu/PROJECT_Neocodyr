@@ -33,8 +33,9 @@ urlpatterns = [
     path('api/comments/', include('comments.urls')),
     path('api/posts/', include('posting.urls')),
     path('api/courses/', include('courses.urls')),
+    path('api/lessons/', include('lessons.urls')),
 
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls)
 ]
 
 

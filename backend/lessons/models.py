@@ -11,9 +11,21 @@ class LessonItem(models.Model):
 
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     order = models.IntegerField(null=False)
-    content_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(
+        "contenttypes.ContentType", 
+        on_delete=models.CASCADE)
+    
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
+
+    @classmethod
+    def get_next_order(cls, lesson_id):
+        max_order = cls.objects.filter(lesson_id=lesson_id).aggregate(
+            models.Max("order")
+        )["order__max"]
+
+        return (max_order or 0) + 1
 
     class Meta:
         unique_together = [["lesson", "order"]]
