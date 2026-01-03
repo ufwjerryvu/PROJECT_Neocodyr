@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'posting',
     'courses',
     'engagement',
+    'lessons'
 ]
 
 MIDDLEWARE = [

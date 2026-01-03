@@ -55,7 +55,7 @@ const Navbar = ({ variant }: NavbarProp) => {
                     <div className="hidden md:flex items-center gap-3">
                         {user?.role.toLowerCase() === "author" &&
                             <button
-                                onClick={() => navigate("/author/courses/create")}
+                                onClick={() => navigate("/courses/create")}
                                 className="flex items-center justify-center h-10 w-10 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]"
                             >
                                 <Plus className="w-5 h-5" />
@@ -167,7 +167,7 @@ const Navbar = ({ variant }: NavbarProp) => {
                                 {user?.role.toLowerCase() === "author" &&
                                     <button
                                         onClick={() => {
-                                            navigate("/author/courses/create");
+                                            navigate("/courses/create");
                                             setIsMobileMenuOpen(false);
                                         }}
                                         className="flex items-center justify-center gap-2 px-6 py-3 text-purple-300 hover:text-purple-200 transition border border-purple-500/30 rounded-lg hover:border-purple-400/60 hover:bg-purple-500/10"

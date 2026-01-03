@@ -38,7 +38,7 @@ const AuthorCreateCoursePageContent = () => {
     const handleSubmitPress = async () => {
         try{
             const response = await courseService.createCourse(courseInfo);
-            navigate(`/author/courses/${response.id}/manage`, {
+            navigate(`/courses/${response.id}/manage`, {
                 replace: true,
                 state: { courseTitle: courseInfo.title }
             });

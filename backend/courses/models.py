@@ -18,6 +18,7 @@ class Course(models.Model):
     title = models.CharField(max_length=256, null=False)
     description = models.TextField(null=False, max_length=1024)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     thumbnail = models.ImageField(
         upload_to=course_thumbnail_path,
         null=True, 
@@ -45,6 +46,19 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    @classmethod
+    def get_next_order(cls, course):
+        """
+        Gets the maximum order in the database and returns the next index. Use-
+        ful when creating a lesson and the order matters. 
+        """
+        max_order = cls.objects.filter(course=course).aggregate(
+            models.Max("order")
+        )["order__max"]
+
+        return (max_order or 0) + 1
 
     class Meta:
         db_table = "Lessons"

@@ -13,9 +13,9 @@ import { ProfilePage } from './pages/Profile/Page';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { GuestRoute } from './routes/GuestRoute';
 import { DashboardPage } from './pages/Dashboard/Page';
-import { AuthorCreateCoursePage } from './pages/Course/Author/Create/Page';
+import { AuthorCreateCoursePage } from './pages/Course/Authors/Create/Page';
 import { AuthorOnlyRoute } from './routes/AuthorOnlyRoute';
-import { AuthorManageCoursePage } from './pages/Course/Author/Manage/Page';
+import { AuthorManageCoursePage } from './pages/Course/Authors/Manage/Page';
 import { NotFoundPage } from './pages/Errors/NotFound/Page';
 import { UnauthorizedPage } from './pages/Errors/Unauthorized/Page';
 import { ForbiddenPage } from './pages/Errors/Forbidden/Page';
@@ -40,8 +40,8 @@ function App() {
             <Route path="/test" element={<TestPage/>}/>
           </Route>
           <Route element={<AuthorOnlyRoute/>}>
-            <Route path="/author/courses/create" element={<AuthorCreateCoursePage/>}/>
-            <Route path="/author/courses/:courseId/manage" element={<AuthorManageCoursePage/>}/>
+            <Route path="/courses/create" element={<AuthorCreateCoursePage/>}/>
+            <Route path="/courses/:courseId/" element={<AuthorManageCoursePage/>}/>
           </Route>
           <Route path="*" element={<NotFoundRedirect/>}/>
         </Routes>
