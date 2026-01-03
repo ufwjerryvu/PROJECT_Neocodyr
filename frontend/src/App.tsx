@@ -40,8 +40,8 @@ function App() {
             <Route path="/test" element={<TestPage/>}/>
           </Route>
           <Route element={<AuthorOnlyRoute/>}>
-            <Route path="/author/courses/create" element={<AuthorCreateCoursePage/>}/>
-            <Route path="/author/courses/:courseId/manage" element={<AuthorManageCoursePage/>}/>
+            <Route path="/courses/create" element={<AuthorCreateCoursePage/>}/>
+            <Route path="/courses/:courseId/" element={<AuthorManageCoursePage/>}/>
           </Route>
           <Route path="*" element={<NotFoundRedirect/>}/>
         </Routes>
