@@ -58,7 +58,7 @@ def validate_time_limit(value: int) -> int:
     
     return value
 
-class LectureCreateSerializer(serializers.ModelSerializer):
+class LectureDetailsSerializer(serializers.ModelSerializer):
     """
     Creates lectures with automatic ordering within a lesson.
     """
@@ -104,8 +104,8 @@ class LectureCreateSerializer(serializers.ModelSerializer):
         )
 
         return lecture
-    
-class ProblemCreateSerializer(serializers.ModelSerializer):
+
+class ProblemDetailsSerializer(serializers.ModelSerializer):
     """
     Creates problems with automatic ordering within a lesson and validates prob-
     lem constraints (time/memory limits, test scripts).
@@ -115,18 +115,21 @@ class ProblemCreateSerializer(serializers.ModelSerializer):
     content_type = serializers.SerializerMethodField()
 
     memory_limit_mb = serializers.IntegerField(
+        required=False,
         validators=[
             validate_memory_limit
         ]
     )
 
     time_limit_ms = serializers.IntegerField(
+        required=False,
         validators=[
             validate_time_limit
         ]
     )
 
     test_script = serializers.CharField(
+        required=False,
         validators=[
             validate_test_script
         ]

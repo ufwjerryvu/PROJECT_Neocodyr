@@ -18,7 +18,8 @@ class LessonItem(models.Model):
 
     content_type = models.ForeignKey(
         "contenttypes.ContentType", 
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE
+    )
     
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
