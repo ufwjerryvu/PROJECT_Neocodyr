@@ -3,12 +3,14 @@ from .views import (
     LectureCreateView,
     LectureDetailsView,
     ProblemCreateView,
-    ProblemDetailsView
+    ProblemDetailsView,
+    LessonItemsDetailsView
 )
 
 urlpatterns = [
     path('<int:lesson_id>/lectures/', LectureCreateView.as_view()),
     path('<int:lesson_id>/problems/', ProblemCreateView.as_view()),
     path('lectures/<int:lecture_id>/', LectureDetailsView.as_view()),
-    path('problems/<int:problem_id>/', ProblemDetailsView.as_view())
+    path('problems/<int:problem_id>/', ProblemDetailsView.as_view()),
+    path('<int:lesson_id>/', LessonItemsDetailsView.as_view())
 ]

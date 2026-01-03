@@ -150,10 +150,76 @@ class ProblemDetailsView(APIView):
             return [permissions.IsAuthenticated(), IsAuthorViaProblem()]
 
     def get(self, request, problem_id):
-        pass
+        try:
+            problem = Problem.objects.get(id=problem_id)
+            serializer = ProblemDetailsSerializer(problem)
+        except Problem.DoesNotExist:
+            raise NotFound()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, problem_id):
-        pass
+        try:
+            problem = Problem.objects.get(id=problem_id)
+
+            serializer = ProblemDetailsSerializer(
+                problem, 
+                data=request.data,
+                partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        except Problem.DoesNotExist:
+            raise NotFound()
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, problem_id):
-        pass
+        try:
+            problem = Problem.objects.get(id=problem_id)
+            lesson = problem.lesson
+
+            # Deleting the object that keeps the polymorphic ordering
+            item = LessonItem.objects.get(
+                lesson_id=lesson.id,
+                content_type=ContentType.objects.get_for_model(Problem),
+                object_id=problem.id
+            )
+
+            problem.delete()
+            item.delete()
+        except Problem.DoesNotExist:
+            raise NotFound()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class LessonItemsDetailsView(APIView):
+    """
+    Retrieves ordered list of lesson items (lectures and problems) for a lesson.
+    Given the lesson's ID, we should be able to retrieve all the items.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, lesson_id):
+        try:
+            items = LessonItem.objects.filter(
+                lesson_id=lesson_id
+            )
+
+            result = []
+            for item in items:
+                obj = item.content_object
+
+                if isinstance(item.content_object, Lecture):
+                    result.append(LectureDetailsSerializer(obj).data)
+                elif isinstance(item.content_object, Problem):
+                    result.append(ProblemDetailsSerializer(obj).data)
+
+            return Response(result, status=status.HTTP_200_OK)
+
+        except Lesson.DoesNotExist:
+            raise NotFound()
